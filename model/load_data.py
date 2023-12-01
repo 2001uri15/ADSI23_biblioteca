@@ -33,7 +33,8 @@ cur.execute("""
 		id integer primary key AUTOINCREMENT,
 		name varchar(20),
 		email varchar(30),
-		password varchar(32)
+		password varchar(32),
+		admin boolean
 	)
 """)
 
@@ -55,7 +56,7 @@ for user in usuarios:
 	dataBase_password = user['password'] + salt
 	hashed = hashlib.md5(dataBase_password.encode())
 	dataBase_password = hashed.hexdigest()
-	cur.execute(f"""INSERT INTO User VALUES (NULL, '{user['nombres']}', '{user['email']}', '{dataBase_password}')""")
+	cur.execute(f"""INSERT INTO User VALUES (NULL, '{user['nombres']}', '{user['email']}', '{dataBase_password}', {user['admin']})""")
 	con.commit()
 
 
@@ -63,7 +64,7 @@ for user in usuarios:
 with open('libros.tsv', 'r') as f:
 	libros = [x.split("\t") for x in f.readlines()]
 
-for author, title, cover, description in libros:
+for author, title, cover, description in libros[:100]:
 	res = cur.execute(f"SELECT id FROM Author WHERE name=\"{author}\"")
 	if res.rowcount == -1:
 		cur.execute(f"""INSERT INTO Author VALUES (NULL, \"{author}\")""")

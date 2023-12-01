@@ -70,3 +70,10 @@ def logout():
 		request.user.delete_session(request.user.token)
 		request.user = None
 	return resp
+
+
+@app.route('/admin')
+def admin():
+	if 'user' not in dir(request) or request.user is None or not request.user.admin:
+		return redirect("/")
+	return render_template('menu_admin.html')
