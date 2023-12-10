@@ -34,6 +34,13 @@
       "password": "1243",
       "id": "Pato",
       "admin": true
+    },
+    {
+      "nombres": "Asier LArra",
+      "email": "2001uri15@gmail.com",
+      "password": "1234",
+      "id": "asierla",
+      "admin": true
     }
   ]
 }
