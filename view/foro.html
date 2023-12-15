@@ -1,17 +1,42 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-<link href="static/estilos/stilos.css" rel="stylesheet">
-
+<html lang="es">
+<head>
+    <link href="static/estilos/estilos.css" rel="stylesheet">
+    <h1>Listado de foros</h1>
+</head>
+<form class="form-inline">
+    <div class="input-group mb-2 mr-sm-2">
+      <label for="nombre" class="col-sm-2 col-form-label">Nombre</label>
+      <input type="text" class="form-control mb-2" id="nombre" name="nombre" placeholder="Nombre" {% if nombre != "": %}value="{{nombre}}"{% endif %}>
+    </div>
+    <button type="submit" class="btn btn-primary">
+        <i class="fa fa-search"></i>
+        Search
+    </button>
+</form>
 <body>
     <main>
         <section>
-            <h1>Listado de foros</h1>
+            <div class="row">
+                {% for tema in temas %}
+                    <div class="col-12 my-2">
+                        <div class="card" style="width: 18rem;">
+                            <div class="card-body">
+                                <h2 class="card-title">{{ tema.nombre }}</h2>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>   
         </section>
         
-    <div class="btn-group" role="group" aria-label="Basic example">
-        <button type="button" class="btn btn-primary" button onclick="window.location.href='anadir_foro'">Añadir</button>
-        <button type="button" class="btn btn-primary" button onclick="window.location.href='/'">Salir</button>
-                
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <a href="anadir_foro" class="btn btn-primary">Añadir</a>
+            <a href="/" class="btn btn-primary">Salir</a>
+        </div>
+    </main>
+</body>
+</html>
 {% endblock %}

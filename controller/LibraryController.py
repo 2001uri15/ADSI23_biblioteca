@@ -1,4 +1,4 @@
-from model import Connection, Book, User
+from model import Connection, Book, User, Tema
 from model.tools import hash_password
 
 db = Connection()
@@ -34,6 +34,18 @@ class LibraryController:
 			for b in res
 		]
 		return books, count
+
+	def search_tema(self, nombre=""):
+		res = db.select("SELECT * FROM Tema WHERE nombre LIKE ?", ('%' + nombre + '%'))
+		temas = [Tema(t[0], t[1], t[2]) for t in res]
+		return temas
+	
+	def comprobar_tema(self, nombre=""):
+		tema_existente = db.select("SELECT 1 FROM Tema WHERE nombre = ? LIMIT 1", (nombre,))
+		return bool(tema_existente)
+	
+	# def anadir_tema(self, nombre="", creado=""):
+
 
 	def get_user(self, email, password):
 		user = db.select("SELECT * from User WHERE email = ? AND password = ?", (email, hash_password(password)))
