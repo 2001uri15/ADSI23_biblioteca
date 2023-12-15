@@ -24,7 +24,7 @@
             {% if request.user.admin: %}
               <li class="nav-item"><a href="/admin" class="nav-link {% if request.path == '/admin' %}active{% endif %}">Menú Administrador</a></li>
             {% endif %}
-          <li class="nav-item"><span class="nav-link disabled">{{request.user.username}}</span></li>
+          <li class="nav-item"><a href="/perfil" class="nav-link {% if request.path == '/perfil' %}active{% endif %}">{{request.user.name}} {{request.user.apellidos}}</a></li>
           <li class="nav-item"><a href="/logout?path={{request.path}}" class="nav-link"><i class="fa fa-sign-out fa-lg"></i></a></li>
           {% else %}
           <li class="nav-item"><a href="/login" class="nav-link {% if request.path == '/login' %}active{% endif %}">Login</a></li>

@@ -80,3 +80,19 @@ def admin():
 	if 'user' not in dir(request) or request.user is None or not request.user.admin:
 		return redirect("/")
 	return render_template('menu_admin.html')
+
+@app.route('/perfil')
+def perfil():
+	_id = int (request.values.get("id", -1))
+	if _id != -1:
+		User = library.get_user_id(_id)
+	else:
+		if 'user' not in dir(request) or request.user is None:
+			User = None
+		else:
+			User = request.user
+	if User != None:
+		return render_template('perfil.html', User=User)
+	else:
+		return redirect("/")
+	

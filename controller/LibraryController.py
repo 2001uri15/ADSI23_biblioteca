@@ -30,7 +30,7 @@ class LibraryController:
 				LIMIT ? OFFSET ?
 		""", (f"%{title}%", f"%{author}%", limit, limit*page))
 		books = [
-			Book(b[0],b[1],b[2],b[3],b[4])
+			Book(b[0],b[1],b[2],b[3],b[4], b[5])
 			for b in res
 		]
 		return books, count
@@ -38,13 +38,20 @@ class LibraryController:
 	def get_user(self, email, password):
 		user = db.select("SELECT * from User WHERE email = ? AND password = ?", (email, hash_password(password)))
 		if len(user) > 0:
-			return User(user[0][0], user[0][1], user[0][2], user[0][4])
+			return User(user[0][0], user[0][1], user[0][2], user[0][3], user[0][4], user[0][6])
+		else:
+			return None
+	
+	def get_user_id(self, id):
+		user = db.select("SELECT * from User WHERE id = ? ", (id, ))
+		if len(user) > 0:
+			return User(user[0][0], user[0][1], user[0][2], user[0][3], user[0][4], user[0][6])
 		else:
 			return None
 
 	def get_user_cookies(self, token, time):
 		user = db.select("SELECT u.* from User u, Session s WHERE u.id = s.user_id AND s.last_login = ? AND s.session_hash = ?", (time, token))
 		if len(user) > 0:
-			return User(user[0][0], user[0][1], user[0][2], user[0][4])
+			return User(user[0][0], user[0][1], user[0][2], user[0][3], user[0][4], user[0][6])
 		else:
 			return None
