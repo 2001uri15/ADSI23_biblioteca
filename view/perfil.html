@@ -1,10 +1,81 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<style>
+    .divbody{
+        margin-left: 15%; 
+        margin-right: 15%;
+    }
+    .img-perfil{
+        display: block; /* Asegura que la imagen sea un elemento de bloque */
+        margin: auto; /* Centra la imagen horizontalmente */
+        max-width: 100%; /* Garantiza que la imagen no se extienda más allá de su tamaño original */
+        height: auto; /* Mantiene la proporción de aspecto de la imagen */
+    }
+    .imagen-centrada {
+      display: block; /* Asegura que la imagen sea un elemento de bloque */
+      margin: auto; /* Centra la imagen horizontalmente */
+      max-width: 100%; /* Garantiza que la imagen no se extienda más allá de su tamaño original */
+      height: auto; /* Mantiene la proporción de aspecto de la imagen */
+    }
+    /* Estilo para el contenedor principal */
+    .contenedor {
+      width: 100%; /* Ancho del 100% para ocupar toda la página */
+      max-width: 1200px; /* Establece un ancho máximo para el diseño, ajusta según sea necesario */
+      margin: auto; /* Centra el contenedor en la página */
+      overflow: hidden; /* Evita que los márgenes se colapsen */
+    }
+
+    /* Estilo para la columna izquierda */
+    .columna-izquierda {
+      width: 25%; /* Ancho fijo del 30% */
+      float: left; /* Hace que la columna izquierda se coloque a la izquierda */
+      box-sizing: border-box; /* Incluye el padding y el borde en el ancho total */
+    }
+
+    /* Estilo para la columna derecha */
+    .columna-derecha {
+      width: 73%; /* El 2% se utiliza para el margen derecho entre las columnas */
+      float: left; /* Hace que la columna derecha se coloque a la derecha de la izquierda */
+      box-sizing: border-box; /* Incluye el padding y el borde en el ancho total */
+    }
+
+    /* Limpieza de flotantes */
+    .clearfix::after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+  </style>
+
+<div class="divbody">
+    <div class="contenedor clearfix">
+        <div class="columna-izquierda">
+            <!-- Contenido de la columna izquierda -->
+            <div class="img-perfil">
+                <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" fill="currentColor" class="bi bi-person-fill imagen-centrada" viewBox="0 0 16 16">
+                    <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                </svg>
+                <h5>{{User.name}} {{User.apellidos}}</h5>
+                <h6 style="color: grey;">{{User.email}}</h6>
+                {% if User.admin %}
+                    <p>Administrador</p>
+                {% else %}
+                    <p>Usuario</p>
+                {% endif %}
+            </div>
+            
+            <p>Contenido de la columna izquierda.</p>
+        </div>
+        <div class="columna-derecha">
+            <!-- Contenido de la columna derecha -->
+            <h2>Columna Derecha</h2>
+            <p>Contenido de la columna derecha.</p>
+        </div>
+    </div>
+</div>
 
 <p>Esto es el menu de User</p>
-<p>{{User.name}}</p>
-<p>{{User.apellidos}}</p>
 <p>{{User.email}}</p>
 <p>{{User.admin}}</p>
 <p>{{User.creado}}</p>
