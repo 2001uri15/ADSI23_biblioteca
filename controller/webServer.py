@@ -102,3 +102,9 @@ def foro():
 		return redirect("/")
 	return render_template('foro.html')
 
+@app.route('/anadir_foro')
+def anadir_foro():
+	if 'user' not in dir(request) or request.user is None:
+		return redirect("/")
+	return render_template('anadir_foro.html')
+

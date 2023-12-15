@@ -7,11 +7,15 @@
 <body>
     <main>
         <section>
-            <h1>Listado de foros</h1>
+            <h1>Formulario de foro</h1>
+            <form id="anadir-foro-form">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" placeholder="Nombre" required><br>
+            </form>
         </section>
         
     <div class="btn-group" role="group" aria-label="Basic example">
-        <button type="button" class="btn btn-primary" button onclick="window.location.href='anadir_foro'">Añadir</button>
+        <button type="button" class="btn btn-primary" button onclick="window.location.href='/foro'">Añadir</button>
         <button type="button" class="btn btn-primary" button onclick="window.location.href='/'">Salir</button>
                 
 {% endblock %}
