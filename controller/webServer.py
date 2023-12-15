@@ -98,7 +98,7 @@ def perfil():
 	
 @app.route('/foro')
 def foro():
-	if 'user' not in dir(request) or request.user:
+	if 'user' not in dir(request) or request.user is None:
 		return redirect("/")
 	return render_template('foro.html')
 
