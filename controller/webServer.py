@@ -86,13 +86,16 @@ def perfil():
 	_id = int (request.values.get("id", -1))
 	if _id != -1:
 		User = library.get_user_id(_id)
+		listas = None
 	else:
 		if 'user' not in dir(request) or request.user is None:
 			User = None
 		else:
 			User = request.user
+			# Buscar los amigos 2 litas
+			listas = library.recomendaciones_amigos(User)
 	if User != None:
-		return render_template('perfil.html', User=User)
+		return render_template('perfil.html', User=User, amigos=listas) #Paso a la vita las dos litas
 	else:
 		return redirect("/")
 	
@@ -107,4 +110,13 @@ def anadir_foro():
 	if 'user' not in dir(request) or request.user is None:
 		return redirect("/")
 	return render_template('anadir_foro.html')
+
+@app.route('/anadiramigo')
+def anadiramigo():
+	if 'user' not in dir(request) or request.user is None:
+		return redirect("/")
+	amigo_id = request.values.get("amigoid", "/")
+	path = request.values.get("location", "/")
+	# TODO
+	return redirect(path)
 

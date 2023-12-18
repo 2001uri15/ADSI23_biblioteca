@@ -100,6 +100,9 @@
             <div>
                 <h5>{{User.name}} {{User.apellidos}}</h5>
                 <h6 style="color: grey;">{{User.email}}</h6>
+                {% if not amigos: %}
+                <button type="button" class="btn btn-primary"><a href="/anadiramigo?=amigoid={{User.id}}&location=/perfil?id={{User.id}}" style="color: white;">Añadir</a></button>
+                {%endif%}
             </div>
 
             <p>Contenido de la columna izquierda.</p>
@@ -107,6 +110,8 @@
 
         <!--CONTENIDO QUE SE QUIERA PONER DEL USUARIO-->
         <div class="columna-derecha">
+
+            {% if amigos: %}
             <!-- RECOMENDACIONES DE AMIGOS -->
             <nav class="navbar bg-body-tertiary">
                 <div class="container-fluid">
@@ -124,26 +129,19 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {%for amigo in amigos%}
                         <tr>
                             <th scope="row">1</th>
-                            <td>Mark</td>
-                            <td></td>
+                            <td>{{amigo}}</td>
+                            <td><button type="button" class="btn btn-primary btn-sm"><a href="/anadiramigo?amigoid={{amigo}}&location=/perfil" style="color: white;">Añadir</a></button></td>
                         </tr>
-                        <tr>
-                            <th scope="row">2</th>
-                            <td>Jacob</td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">3</th>
-                            <td colspan="2">Larry the Bird</td>
-                        </tr>
+                        {%endfor%}
                     </tbody>
                 </table>
-
-
-
             </div>
+            {%endif%}
+
+
         </div>
         <p>Contenido de la columna derecha.</p>
     </div>
