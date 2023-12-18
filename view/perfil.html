@@ -94,15 +94,16 @@
                     {% else %}
                     <p style="color:blue; font-family: Arial, Helvetica, sans-serif; font-weight:bold;">Usuario</p>
                     {% endif %}
+
+                    {% if not amigos: %}
+                        <button type="button" class="btn btn-primary"><a href="/anadiramigo?=amigoid={{User.id}}&location=/perfil?id={{User.id}}" style="color: white; width: 100%;">Añadir</a></button>
+                    {%endif%}
                 </div>
             </div>
             <!--INFORMACIÓN DEL USUARIO-->
             <div>
                 <h5>{{User.name}} {{User.apellidos}}</h5>
                 <h6 style="color: grey;">{{User.email}}</h6>
-                {% if not amigos: %}
-                <button type="button" class="btn btn-primary"><a href="/anadiramigo?=amigoid={{User.id}}&location=/perfil?id={{User.id}}" style="color: white;">Añadir</a></button>
-                {%endif%}
             </div>
 
             <p>Contenido de la columna izquierda.</p>

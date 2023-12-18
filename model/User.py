@@ -24,14 +24,14 @@ class User:
 	def __str__(self):
 		return f"{self.name} {self.apellidos} ({self.email})"
 
-	def __hash__(self):
-		return hash(self.id)
+	#def __hash__(self):
+	#	return hash(self.id)
 
-	def __eq__(self, x):
-		return self.id == x.id
+	#def __eq__(self, x):
+	#	return self.id == x.id
 		
-	def __ne__(self, x):
-		return self.id != x.id
+	#def __ne__(self, x):
+	#	return self.id != x.id
 
 	def new_session(self):
 		now = float(datetime.datetime.now().time().strftime("%Y%m%d%H%M%S.%f"))

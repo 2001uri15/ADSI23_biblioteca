@@ -93,7 +93,7 @@ def perfil():
 		else:
 			User = request.user
 			# Buscar los amigos 2 litas
-			listas = library.recomendaciones_amigos(User)
+			listas = ["asier", "Juanpe"] #library.recomendaciones_amigos(User)
 	if User != None:
 		return render_template('perfil.html', User=User, amigos=listas) #Paso a la vita las dos litas
 	else:
