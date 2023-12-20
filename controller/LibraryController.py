@@ -104,3 +104,26 @@ class LibraryController:
 	def somosAmigos(self, user, amigo):
 		somosAmigos = db.select("SELECT 1 FROM Amigo WHERE idUsuario = ? AND idAmigo = ? LIMIT 1", (user.id, amigo.id, ))
 		return bool(somosAmigos)
+
+	def recomendaciones_amigos_libros(self, user):
+		# Obtengo los libros que he leido
+		libro = db.select("SELECT idLibro from Reserva WHERE idUsuario = ?", (user.id,))
+		amigoRecom = []
+		if len(libro) > 0:
+			for amigo in libro:
+				# Que usuarios han leido los libros que he leido yo
+				librosComun = db.select("SELECT idUsuario FROM Reserva WHERE idLibro = ?", (amigo[0],))
+				for usuario in librosComun:
+					# Obtengo su información
+					usu = db.select("SELECT * FROM User WHERE id = ?", (usuario[0],))
+					amigo_obj = User(usu[0][0], usu[0][1], usu[0][2], usu[0][3], usu[0][4], usu[0][6])
+
+					# No añado a la lista mi usuario
+					if (user.id is not amigo_obj.id):
+						amigoRecom.append(amigo_obj)
+			return amigoRecom
+		else:
+			return amigoRecom
+	
+	
+

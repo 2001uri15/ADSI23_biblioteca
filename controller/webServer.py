@@ -85,11 +85,11 @@ def admin():
 def perfil():
 	_id = int (request.values.get("id", -1))
 	esAmigo = False
+	listas = None
+	misAmigos = None
 	if _id != -1:
 		User = library.get_user_id(_id)
 		UserLogin = request.user
-		listas = None
-		misAmigos = None
 		esAmigo = library.somosAmigos(UserLogin, User)
 	else:
 		if 'user' not in dir(request) or request.user is None:
@@ -98,8 +98,10 @@ def perfil():
 			User = request.user
 			# Mi lista de amigos
 			misAmigos = library.misAmigos(User)
-			# Buscar los amigos 2 litas; FALTA LA RECOMENDACIÓN DE USUARIOS POR LOS LIBROS
-			listas = library.recomendaciones_amigos(User)
+			# Buscar las dos listas: Amigos de amigo y recomendaciones de usuarios por libros
+			listaAmigos = library.recomendaciones_amigos(User)
+			listaLibros = library.recomendaciones_amigos_libros(User)
+			listas = listaAmigos + listaLibros
 	if User != None:
 		return render_template('perfil.html', User=User, amigosRecom=listas, amigos=misAmigos, esAmigo=esAmigo) #Paso a la vita las dos litas
 	else:
