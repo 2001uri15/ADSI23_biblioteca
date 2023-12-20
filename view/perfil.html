@@ -8,57 +8,42 @@
     }
 
     .img-perfil {
-        display: block;
-        /* Asegura que la imagen sea un elemento de bloque */
-        margin: auto;
-        /* Centra la imagen horizontalmente */
-        max-width: 100%;
-        /* Garantiza que la imagen no se extienda más allá de su tamaño original */
-        height: auto;
-        /* Mantiene la proporción de aspecto de la imagen */
+        display: block;    /* Asegura que la imagen sea un elemento de bloque */
+        margin: auto;      /* Centra la imagen horizontalmente */
+        max-width: 100%;   /* Garantiza que la imagen no se extienda más allá de su tamaño original */
+        height: auto;      /* Mantiene la proporción de aspecto de la imagen */
     }
 
     .imagen-centrada {
-        display: block;
-        /* Asegura que la imagen sea un elemento de bloque */
-        margin: auto;
-        /* Centra la imagen horizontalmente */
-        max-width: 100%;
-        /* Garantiza que la imagen no se extienda más allá de su tamaño original */
-        height: auto;
-        /* Mantiene la proporción de aspecto de la imagen */
+        display: block;    /* Asegura que la imagen sea un elemento de bloque */
+        margin: auto;      /* Centra la imagen horizontalmente */
+        max-width: 100%;   /* Garantiza que la imagen no se extienda más allá de su tamaño original */
+        height: auto;      /* Mantiene la proporción de aspecto de la imagen */
     }
 
     /* Estilo para el contenedor principal */
     .contenedor {
-        width: 100%;
-        /* Ancho del 100% para ocupar toda la página */
-        max-width: 1200px;
-        /* Establece un ancho máximo para el diseño, ajusta según sea necesario */
-        margin: auto;
-        /* Centra el contenedor en la página */
-        overflow: hidden;
-        /* Evita que los márgenes se colapsen */
+        width: 100%;       /* Ancho del 100% para ocupar toda la página */
+        max-width: 1200px; /* Establece un ancho máximo para el diseño, ajusta según sea necesario */
+        margin: auto;      /* Centra el contenedor en la página */
+        overflow: hidden;  /* Evita que los márgenes se colapsen */
+        height: 100%;
     }
 
     /* Estilo para la columna izquierda */
     .columna-izquierda {
-        width: 25%;
-        /* Ancho fijo del 30% */
-        float: left;
-        /* Hace que la columna izquierda se coloque a la izquierda */
-        box-sizing: border-box;
-        /* Incluye el padding y el borde en el ancho total */
+        width: 25%;        /* Ancho fijo del 30% */
+        float: left;       /* Hace que la columna izquierda se coloque a la izquierda */
+        box-sizing: border-box;      /* Incluye el padding y el borde en el ancho total */
+        height: 100%;
     }
 
     /* Estilo para la columna derecha */
     .columna-derecha {
-        width: 73%;
-        /* El 2% se utiliza para el margen derecho entre las columnas */
-        float: left;
-        /* Hace que la columna derecha se coloque a la derecha de la izquierda */
-        box-sizing: border-box;
-        /* Incluye el padding y el borde en el ancho total */
+        width: 73%;        /* El 2% se utiliza para el margen derecho entre las columnas */
+        float: left;       /* Hace que la columna derecha se coloque a la derecha de la izquierda */
+        box-sizing: border-box;    /* Incluye el padding y el borde en el ancho total */
+        height: 100%;
     }
 
     /* Limpieza de flotantes */
@@ -71,10 +56,12 @@
     .texto-central {
         font-size: 18px;
         color: #333;
-        margin: auto;
-        /* Centra el contenedor en la página horizontalmente */
-        text-align: center;
-        /* Centra el texto dentro del contenedor */
+        margin: auto;      /* Centra el contenedor en la página horizontalmente */
+        text-align: center;      /* Centra el texto dentro del contenedor */
+    }
+    .recom_amigos{
+        color: black;
+        text-decoration: none;
     }
 </style>
 
@@ -95,8 +82,14 @@
                     <p style="color:blue; font-family: Arial, Helvetica, sans-serif; font-weight:bold;">Usuario</p>
                     {% endif %}
 
-                    {% if not amigos: %}
-                        <button type="button" class="btn btn-primary"><a href="/anadiramigo?=amigoid={{User.id}}&location=/perfil?id={{User.id}}" style="color: white; width: 100%;">Añadir</a></button>
+                    {% if not amigosRecom: %}
+                        {%if not esAmigo:%}
+                            <button type="button" class="btn btn-primary"><a href="/anadiramigo?=amigoid={{User.id}}&location=/perfil?id={{User.id}}" style="color: white; text-decoration: none;">Añadir amig@</a></button>
+                            <br><br>
+                        {%else%}
+                            <button type="button" class="btn btn-secondary"><a href="/eliminaramigo?=amigoid={{User.id}}&location=/perfil?id={{User.id}}" style="color: white; text-decoration: none;">Dejar amig@</a></button>
+                            <br><br>
+                        {%endif%}
                     {%endif%}
                 </div>
             </div>
@@ -113,6 +106,34 @@
         <div class="columna-derecha">
 
             {% if amigos: %}
+            <!-- MI LISTA DE AMIGOS AMIGOS -->
+            <nav class="navbar bg-body-tertiary">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#amigos">Mis amigos</a>
+                </div>
+            </nav>
+            <div>
+                <!--TABLA DE MIS AMIGOS-->
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="width: 3%;">#</th>
+                            <th scope="col" style="width: 97%;">Nombre</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {%for amigo in amigos%}
+                        <tr>
+                            <th scope="row"></th>
+                            <td><a class="recom_amigos" href="/perfil?id={{amigo.id}}">{{amigo.name}} {{amigo.apellidos}}</a></td>
+                        </tr>
+                        {%endfor%}
+                    </tbody>
+                </table>
+            </div>
+            {%endif%}
+
+            {% if amigosRecom: %}
             <!-- RECOMENDACIONES DE AMIGOS -->
             <nav class="navbar bg-body-tertiary">
                 <div class="container-fluid">
@@ -125,16 +146,16 @@
                     <thead>
                         <tr>
                             <th scope="col" style="width: 3%;">#</th>
-                            <th scope="col" style="width: 79%;">Nombre</th>
-                            <th scope="col" style="width: 18%;">Button</th>
+                            <th scope="col" style="width: 77%;">Nombre</th>
+                            <th scope="col" style="width: 20%;">Button</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {%for amigo in amigos%}
+                        {%for amigo in amigosRecom%}
                         <tr>
-                            <th scope="row">1</th>
-                            <td>{{amigo}}</td>
-                            <td><button type="button" class="btn btn-primary btn-sm"><a href="/anadiramigo?amigoid={{amigo}}&location=/perfil" style="color: white;">Añadir</a></button></td>
+                            <th scope="row"></th>
+                            <td><a class="recom_amigos" href="/perfil?id={{amigo.id}}">{{amigo.name}} {{amigo.apellidos}}</a></td>
+                            <td><button type="button" class="btn btn-primary btn-sm recom_soli"><a href="/anadiramigo?amigoid={{amigo.id}}&location=/perfil" style="color: white; text-decoration: none;">Enviar Solicitud</a></button></td>
                         </tr>
                         {%endfor%}
                     </tbody>
@@ -142,9 +163,9 @@
             </div>
             {%endif%}
 
-
+            <p>Contenido de la columna derecha.</p>
         </div>
-        <p>Contenido de la columna derecha.</p>
+        
     </div>
 </div>
 </div>

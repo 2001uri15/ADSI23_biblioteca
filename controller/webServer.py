@@ -84,18 +84,24 @@ def admin():
 @app.route('/perfil')
 def perfil():
 	_id = int (request.values.get("id", -1))
+	esAmigo = False
 	if _id != -1:
 		User = library.get_user_id(_id)
+		UserLogin = request.user
 		listas = None
+		misAmigos = None
+		esAmigo = library.somosAmigos(UserLogin, User)
 	else:
 		if 'user' not in dir(request) or request.user is None:
 			User = None
 		else:
 			User = request.user
-			# Buscar los amigos 2 litas
-			listas = ["asier", "Juanpe"] #library.recomendaciones_amigos(User)
+			# Mi lista de amigos
+			misAmigos = library.misAmigos(User)
+			# Buscar los amigos 2 litas; FALTA LA RECOMENDACIÓN DE USUARIOS POR LOS LIBROS
+			listas = library.recomendaciones_amigos(User)
 	if User != None:
-		return render_template('perfil.html', User=User, amigos=listas) #Paso a la vita las dos litas
+		return render_template('perfil.html', User=User, amigosRecom=listas, amigos=misAmigos, esAmigo=esAmigo) #Paso a la vita las dos litas
 	else:
 		return redirect("/")
 	

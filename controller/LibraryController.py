@@ -69,5 +69,38 @@ class LibraryController:
 			return None
 
 	def recomendaciones_amigos(self, user):
-		amigos = []
-		return amigos
+		user = db.select("SELECT * from Amigo WHERE idUsuario = ?", (user.id,))
+		amigoRecom = []
+		if len(user) > 0:
+			for amigo in user:
+				# Amigos de mis amigos
+				amigos_de_amigo = db.select("SELECT * FROM Amigo WHERE idUsuario = ?", (amigo[1],))
+
+				for amigo_de_amigo in amigos_de_amigo:
+					# Información del amigo de mi amigo
+					amigo_info = db.select("SELECT * FROM User WHERE id = ?", (amigo_de_amigo[1],))
+					amigo_obj = User(amigo_info[0][0], amigo_info[0][1], amigo_info[0][2], amigo_info[0][3], amigo_info[0][4], amigo_info[0][6])
+					amigoRecom.append(amigo_obj)
+
+			return amigoRecom
+		else:
+			return amigoRecom
+	
+	def misAmigos(self, user):
+		user = db.select("SELECT * from Amigo WHERE idUsuario = ?", (user.id,))
+		misAmigos = []
+		if len(user) > 0:
+			for amigo in user:
+				# Información de mi amigo
+				user1 = db.select("SELECT * from User WHERE id = ? ", (amigo[1], ))
+				amigo_obj = User(user1[0][0], user1[0][1], user1[0][2], user1[0][3], user1[0][4], user1[0][6])
+				misAmigos.append(amigo_obj)
+				print(amigo_obj)
+
+			return misAmigos
+		else:
+			return misAmigos
+
+	def somosAmigos(self, user, amigo):
+		somosAmigos = db.select("SELECT 1 FROM Amigo WHERE idUsuario = ? AND idAmigo = ? LIMIT 1", (user.id, amigo.id, ))
+		return bool(somosAmigos)
