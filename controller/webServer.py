@@ -101,7 +101,7 @@ def perfil():
 			# Buscar las dos listas: Amigos de amigo y recomendaciones de usuarios por libros
 			listaAmigos = library.recomendaciones_amigos(User)
 			listaLibros = library.recomendaciones_amigos_libros(User)
-			listas = listaAmigos + listaLibros
+			listas = set(listaAmigos + listaLibros)
 	if User != None:
 		return render_template('perfil.html', User=User, amigosRecom=listas, amigos=misAmigos, esAmigo=esAmigo) #Paso a la vita las dos litas
 	else:
