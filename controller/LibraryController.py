@@ -1,5 +1,6 @@
 from model import Connection, Book, User, Tema
 from model.tools import hash_password
+from model.Tema import Tema
 
 db = Connection()
 
@@ -51,9 +52,10 @@ class LibraryController:
 		temas_mostrar = db.select("SELECT * FROM Tema")
 		tema_creado = []
 		for tema_info in temas_mostrar:
-        	mostrar = Tema(tema_info.id, tema_info.nombre, tema_info.creado)
+			mostrar = Tema(tema_info[0], tema_info[1], tema_info[2])
 			tema_creado.append(mostrar)
 		return tema_creado
+
 
 	def get_user(self, email, password):
 		user = db.select("SELECT * from User WHERE email = ? AND password = ?", (email, hash_password(password)))

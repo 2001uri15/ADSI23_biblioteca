@@ -115,7 +115,7 @@ def foro():
 	else:
 		temas = library.mostrar_tema()
 
-	return render_template('foro.html', tema = temas)
+	return render_template('foro.html', temasF = temas)
 
 @app.route('/anadir_foro')
 def anadir_foro():
@@ -147,3 +147,16 @@ def gest_anadir_foro():
 		else:
 			return render_template('anadir_foro.html', mensaje="El tema ya existe")
 	return render_template('foro.html')
+
+@app.route('/tema_foro')
+def tema():
+	if 'user' not in dir(request) or request.user is None:
+		return redirect("/")
+	return render_template('tema.html')
+
+@app.route('/gest_enviar_mensaje')
+def enviar_mensaje():
+	if 'user' not in dir(request) or request.user is None:
+		return redirect("/")
+	return render_template('tema.html')
+
