@@ -16,22 +16,24 @@
         Search
     </button>
 </form>
-<body>
+<body style="margin-left: 15%; margin-right: 15%;">
     <main>
-        <section>
-            <div class="row">
-                {% for tema in temas %}
-                    <div class="col-12 my-2">
-                        <div class="card" style="width: 18rem;">
-                            <div class="card-body">
-                                <h2 class="card-title">{{ tema.nombre }}</h2>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>   
-        </section>
-        
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col" style="width: 3%;">#</th>
+                    <th scope="col" style="width: 97%;">nombre</th>
+                </tr>
+            </thead>
+            <tbody>
+                {%for tema in temas%}
+                <tr>
+                    <th scope="row"></th>
+                    <td><a style="color:black;text-decoration: none;"> href="/foro?id={{tema.id}}">{{tema.nombre}}</a></td>
+                </tr>
+                {%endfor%}
+            </tbody>
+        </table>
         <div class="btn-group" role="group" aria-label="Basic example">
             <a href="anadir_foro" class="btn btn-primary">Añadir</a>
             <a href="/" class="btn btn-primary">Salir</a>

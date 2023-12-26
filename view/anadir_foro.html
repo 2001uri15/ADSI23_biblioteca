@@ -4,7 +4,12 @@
 
 <link href="static/estilos/stilos.css" rel="stylesheet">
 
-<body>
+<body style="margin-left: 15%; margin-right: 15%;">
+    {% if mensaje: %}
+    <div class="alert alert-danger" role="alert">
+        {{mensaje}}
+    </div>
+    {% endif %}
     <main>
         <section>
             <h1>Formulario de foro</h1>
@@ -15,7 +20,7 @@
         </section>
         
     <div class="btn-group" role="group" aria-label="Basic example">
-        <button type="button" class="btn btn-primary" button onclick="window.location.href='/foro'">Añadir</button>
+        <button type="button" class="btn btn-primary" onclick="window.location.href='gest_anadir_foro?&location=/foro&nombre_tema=' + document.getElementById('nombre').value">Añadir</button>
         <button type="button" class="btn btn-primary" button onclick="window.location.href='/'">Salir</button>
                 
 {% endblock %}

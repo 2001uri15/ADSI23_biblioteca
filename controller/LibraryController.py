@@ -44,8 +44,16 @@ class LibraryController:
 		tema_existente = db.select("SELECT 1 FROM Tema WHERE nombre = ? LIMIT 1", (nombre,))
 		return bool(tema_existente)
 	
-	# def anadir_tema(self, nombre="", creado=""):
-
+	def anadir_tema(self, nombre="", creado=""):
+		tema_anadir = db.insert("INSERT INTO TEMA (nombre,creado) VALUES (?,?)", (nombre,creado,))
+			
+	def mostrar_tema(self):
+		temas_mostrar = db.select("SELECT * FROM Tema")
+		tema_creado = []
+		for tema_info in temas_mostrar:
+        	mostrar = Tema(tema_info.id, tema_info.nombre, tema_info.creado)
+			tema_creado.append(mostrar)
+		return tema_creado
 
 	def get_user(self, email, password):
 		user = db.select("SELECT * from User WHERE email = ? AND password = ?", (email, hash_password(password)))

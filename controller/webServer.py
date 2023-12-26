@@ -109,9 +109,13 @@ def perfil():
 	
 @app.route('/foro')
 def foro():
+	temas = []
 	if 'user' not in dir(request) or request.user is None:
 		return redirect("/")
-	return render_template('foro.html')
+	else:
+		temas = library.mostrar_tema()
+
+	return render_template('foro.html', tema = temas)
 
 @app.route('/anadir_foro')
 def anadir_foro():
@@ -128,3 +132,18 @@ def anadiramigo():
 	# TODO
 	return redirect(path)
 
+@app.route('/gest_anadir_foro')
+def gest_anadir_foro():
+	if 'user' not in dir(request) or request.user is None:
+		return redirect("/")
+	else:
+		User = request.user
+		nombre = request.values.get("nombre_tema", "/")
+		comprobar = library.comprobar_tema(nombre)
+		path = request.values.get("location", "/")
+		if not comprobar:
+			library.anadir_tema(nombre, User.id)
+			return redirect(path)
+		else:
+			return render_template('anadir_foro.html', mensaje="El tema ya existe")
+	return render_template('foro.html')
