@@ -7,16 +7,6 @@
     <link href="static/estilos/estilos.css" rel="stylesheet">
     <h1>Listado de foros</h1>
 </head>
-<form class="form-inline">
-    <div class="input-group mb-2 mr-sm-2">
-      <label for="nombre" class="col-sm-2 col-form-label">Nombre</label>
-      <input type="text" class="form-control mb-2" id="nombre" name="nombre" placeholder="Nombre" {% if nombre != "": %}value="{{nombre}}"{% endif %}>
-    </div>
-    <button type="submit" class="btn btn-primary">
-        <i class="fa fa-search"></i>
-        Search
-    </button>
-</form>
 <body style="margin-left: 15%; margin-right: 15%;">
     <main>
         <table class="table">

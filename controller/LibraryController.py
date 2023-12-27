@@ -38,13 +38,9 @@ class LibraryController:
 		]
 		return books, count
 
-	def obtener_nombre_usuario(self, idUsuario=""):
-		res = db.select("SELECT name FROM User WHERE id = ?", (id,))
-		return res
-	
 	def obtener_nombre_tema(self, idTema=""):
-		res = db.select("SELECT nombre FROM Tema WHERE id = ?", (idTema,))
-		return res
+		res = db.select("SELECT nombre FROM Tema WHERE id = ? LIMIT 1", (idTema,))
+		return res[0][0]
 
 	def search_tema(self, nombre=""):
 		res = db.select("SELECT * FROM Tema WHERE nombre LIKE ?", ('%' + nombre + '%'))
