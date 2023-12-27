@@ -1,6 +1,8 @@
-from model import Connection, Book, User, Tema
+from model import Connection, Book, User, Tema, Publicacion
 from model.tools import hash_password
 from model.Tema import Tema
+from model.Publicacion import Publicacion
+
 
 db = Connection()
 
@@ -36,6 +38,14 @@ class LibraryController:
 		]
 		return books, count
 
+	def obtener_nombre_usuario(self, idUsuario=""):
+		res = db.select("SELECT name FROM User WHERE id = ?", (id,))
+		return res
+	
+	def obtener_nombre_tema(self, idTema=""):
+		res = db.select("SELECT nombre FROM Tema WHERE id = ?", (idTema,))
+		return res
+
 	def search_tema(self, nombre=""):
 		res = db.select("SELECT * FROM Tema WHERE nombre LIKE ?", ('%' + nombre + '%'))
 		temas = [Tema(t[0], t[1], t[2]) for t in res]
@@ -55,7 +65,17 @@ class LibraryController:
 			mostrar = Tema(tema_info[0], tema_info[1], tema_info[2])
 			tema_creado.append(mostrar)
 		return tema_creado
-
+	
+	def mostrar_mensaje(self, idTema=""):
+		mensaje_mostrar = db.select("SELECT * FROM Publicacion WHERE idTema = ?", (idTema,))
+		mensajes_enviados = []
+		for mensaje in mensaje_mostrar:
+			mensaje_env = Publicacion(mensaje[0], mensaje[1], mensaje[2], mensaje[3], mensaje[4])
+			mensajes_enviados.append(mensaje_env)
+		return mensajes_enviados
+	
+	def enviar_mensaje(self, idTema="", fecha="", idUsuario="", texto=""):
+		mensaje_anadir = db.insert("INSERT INTO Publicacion (idTema,fecha,idUsuario,texto) VALUES (?,?,?,?)", (idTema,fecha,idUsuario,texto,))
 
 	def get_user(self, email, password):
 		user = db.select("SELECT * from User WHERE email = ? AND password = ?", (email, hash_password(password)))

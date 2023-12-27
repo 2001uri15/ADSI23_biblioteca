@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<html lang="es">
+<head>
+    <link href="static/estilos/estilos.css" rel="stylesheet">
+</head>
+<body style="margin-left: 15%; margin-right: 15%;">
+    <main>
+        <div class="titulo-especial">
+            <h1>{{ nombre_tema }}</h1>
+        </div>
+        <table class="table">
+            <tbody>
+                {% for mensaje in mensajes %}
+                <tr>
+                    <th scope="row"></th>
+                    <td>{{ mensaje.idUsuario }}</td>
+                    <td>{{ mensaje.texto }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <form action="{{ url_for('ver_tema', tema_id=tema_id) }}" method="post">
+            <label for="mensaje">Nuevo mensaje:</label>
+            <input type="text" id="mensaje" name="mensaje" required>
+            <button type="submit" class="btn btn-primary">Enviar</button>
+        </form>
+        <a href="/">Volver a la lista de temas</a>
+    </main>
+</body>
+</html>
+{% endblock %}
