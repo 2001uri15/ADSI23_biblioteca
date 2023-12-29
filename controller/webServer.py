@@ -41,7 +41,7 @@ def catalogue():
 	books, nb_books = library.search_books(title=title, author=author, page=page - 1)
 	total_pages = (nb_books // 6) + 1
 	return render_template('catalogue.html', books=books, title=title, author=author, current_page=page,
-	                       total_pages=total_pages, max=max, min=min)
+	                       total_pages=total_pages, max=max, min=min, is_admin=request.user.admin)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -81,6 +81,42 @@ def admin():
 	if 'user' not in dir(request) or request.user is None or not request.user.admin:
 		return redirect("/")
 	return render_template('menu_admin.html')
+
+
+@app.route('/admin/add_user', methods=['GET', 'POST'])
+def add_user():
+    if 'user' not in dir(request) or request.user is None or not request.user.admin:
+        return redirect("/")
+
+    if request.method == 'POST':
+        name = request.form['name']
+        apellidos = request.form['apellidos']
+        birthdate = request.form['birthdate']
+        email = request.form['email']
+        password = request.form['password']
+        admin = 'admin' in request.form
+
+        library.add_user(name, apellidos, birthdate, email, password, admin)
+        return redirect('/admin')
+
+    return render_template('add_user.html') 
+
+@app.route('/admin/delete_user')
+def delete_user():
+    return render_template('delete_user.html') 
+
+@app.route('/admin/list_users')
+def list_users():
+    users = library.get_all_users()
+    return render_template('list_users.html', users=users) 
+
+@app.route('/admin/add_book')
+def add_book():
+    return render_template('add_book.html') 
+	
+
+
+
 
 @app.route('/perfil')
 def perfil():

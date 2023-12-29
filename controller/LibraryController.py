@@ -152,4 +152,8 @@ class LibraryController:
 			return amigoRecom
 	
 	
-
+	def add_user(self, name, apellidos, birthdate, email, password, admin):
+		hashed_password = hash_password(password)
+		admin_value = 1 if admin else 0
+		user_id = db.insert("INSERT INTO User (name, apellidos, creado, email, password, admin) VALUES (?, ?, ?, ?, ?, ?)", (name, apellidos, birthdate, email, hashed_password, admin_value))
+		return user_id
