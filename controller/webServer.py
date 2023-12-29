@@ -101,9 +101,15 @@ def add_user():
 
     return render_template('add_user.html') 
 
-@app.route('/admin/delete_user')
-def delete_user():
-    return render_template('delete_user.html') 
+@app.route('/admin/delete_user/<int:user_id>', methods=['POST'])
+def delete_user(user_id):
+	if 'user' not in dir(request) or request.user is None or not request.user.admin:
+		return redirect("/")
+	
+	if request.method == 'POST':
+		idInt = int(user_id)
+		library.delete_user(idInt)
+		return redirect('/admin/list_users')
 
 @app.route('/admin/list_users')
 def list_users():

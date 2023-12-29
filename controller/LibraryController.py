@@ -166,3 +166,6 @@ class LibraryController:
 			for u in users
 		]
 		return user_objects
+
+	def delete_user(self, user_id):
+		db.delete("DELETE FROM User WHERE id = ?", (user_id,))
