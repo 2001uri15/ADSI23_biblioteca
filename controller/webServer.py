@@ -107,8 +107,10 @@ def delete_user():
 
 @app.route('/admin/list_users')
 def list_users():
-    users = library.get_all_users()
-    return render_template('list_users.html', users=users) 
+	if 'user' not in dir(request) or request.user is None or not request.user.admin:
+		return redirect("/")
+	users = library.get_all_users()
+	return render_template('list_users.html', users=users) 
 
 @app.route('/admin/add_book')
 def add_book():
