@@ -63,6 +63,26 @@ def catalogue():
 	                       total_pages=total_pages, max=max, min=min)
 	"""
 
+@app.route('/edit_copies/<int:book_id>', methods=['GET', 'POST'])
+def edit_copies(book_id):
+    # Verificar si el usuario es administrador
+    if 'user' not in dir(request) or request.user is None or not request.user.admin:
+        return redirect("/")
+
+    if request.method == 'POST':
+        # Obtener el nuevo número de copias desde el formulario
+        new_num_copies = int(request.form.get('new_num_copies', 0))
+
+        # Actualizar el número de copias en la base de datos
+        library.update_num_copies(book_id, new_num_copies)
+
+        # Redirigir de vuelta al catálogo
+        return redirect('/catalogue')
+
+    # Obtener información del libro para mostrar en el formulario
+    book_info = library.get_book_info(book_id)
+    return render_template('edit_copies.html', book_info=book_info)
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 	if 'user' in dir(request) and request.user and request.user.token:
@@ -189,8 +209,22 @@ def add_book():
         else:
             author_id = author.id
 
+
+		# Validar que num_copies sea un número positivo o cero
+        num_copies = request.form['num_copies']
+        try:
+            num_copies = int(num_copies)
+            if num_copies < 0:
+                flash('Please enter a non-negative integer for the number of copies.', 'error')
+                return redirect(request.url)
+        except ValueError:
+            flash('Please enter a valid integer for the number of copies.', 'error')
+            return redirect(request.url)
+
         library.add_book(title, author_id, num_copies, cover, description)
         return redirect('/admin')
+
+		
 
     return render_template('add_book.html')
 	

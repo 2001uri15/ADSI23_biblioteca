@@ -195,3 +195,14 @@ class LibraryController:
 		copies_info = db.select("SELECT id, SUM(numCopias) FROM Book GROUP BY id")
 		total_copies_info = {book_id: num_copies for book_id, num_copies in copies_info}
 		return total_copies_info
+
+	def update_num_copies(self, book_id, new_num_copies):
+		db.update("UPDATE Book SET numCopias = ? WHERE id = ?", (new_num_copies, book_id))
+
+	def get_book_info(self, book_id):
+		book_info = db.select("SELECT * FROM Book WHERE id = ? LIMIT 1", (book_id,))
+		if book_info:
+			book = Book(book_info[0][0], book_info[0][1], book_info[0][2], book_info[0][3], book_info[0][4], book_info[0][5])
+			return book
+		else:
+			return None

@@ -37,6 +37,7 @@
 
                         {% if is_admin and total_copies_info %}
                             <p class="card-text" style="color: #0D6EFD; font-weight: bold;">Copias Totales: {{ total_copies_info[book.id] if book.id in total_copies_info else 0 }}</p>
+                            <a href="{{ url_for('edit_copies', book_id=book.id) }}" class="btn btn-primary">Editar número de Copias</a>
                         {% endif %}
                     </div>
                 </div>

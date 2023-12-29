@@ -17,8 +17,15 @@
     <label for="description">Descripción:</label>
     <textarea name="description"></textarea><br>
 
+    <!--
     <label for="num_copies">Número de Copias*:</label>
     <input type="number" name="num_copies" required><br>
+    -->
+
+    <div class="form-group">
+      <label for="num_copies">Número de Copias*:</label>
+      <input type="text" class="form-control" id="num_copies" name="num_copies" pattern="[0-9]+" title="Introduzca un número positivo o 0" required>
+    </div>
 
     <input type="submit" value="Añadir Libro">
   </form>
