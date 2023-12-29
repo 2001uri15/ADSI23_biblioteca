@@ -1,10 +1,16 @@
 {% extends 'base.html' %}
 
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
 {% block content %}
-  <h2>List of Users</h2>
-  <ul>
-    {% for user in users %}
-      <li>{{ user.name }} - {{ user.email }}{% if user.admin %} (Admin){% endif %}</li>
-    {% endfor %}
-  </ul>
+  <div class="container">
+    <h2>Lista de usuarios</h2>
+    <ul class="list-group">
+      {% for user in users %}
+        <li class="list-group-item">{{ user.name }} - {{ user.email }}{% if user.admin %} (Admin){% endif %}</li>
+      {% endfor %}
+    </ul>
+  </div>
 {% endblock %}
