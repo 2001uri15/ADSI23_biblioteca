@@ -1,0 +1,27 @@
+
+{% extends 'base.html' %}
+
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h2>Confirmar Eliminación de Usuario</h2>
+
+    {% if error_message %}
+    <div class="alert alert-danger" role="alert">
+      {{ error_message }}
+    </div>
+  {% endif %}
+
+    <form method="post" action="/admin/delete_user_confirm">
+      <div class="form-group">
+        <label for="user_id">ID del Usuario:</label>
+        <input type="number" class="form-control" id="user_id" name="user_id" required>
+      </div>
+      <pre>     </pre>
+      <button type="submit" class="btn btn-danger">Eliminar Usuario</button>
+    </form>
+  </div>
+{% endblock %}

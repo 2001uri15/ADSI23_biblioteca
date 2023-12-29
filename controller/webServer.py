@@ -101,6 +101,7 @@ def add_user():
 
     return render_template('add_user.html') 
 
+
 @app.route('/admin/delete_user/<int:user_id>', methods=['POST'])
 def delete_user(user_id):
 	if 'user' not in dir(request) or request.user is None or not request.user.admin:
@@ -110,6 +111,26 @@ def delete_user(user_id):
 		idInt = int(user_id)
 		library.delete_user(idInt)
 		return redirect('/admin/list_users')
+
+@app.route('/admin/delete_user_confirm', methods=['GET', 'POST'])
+def delete_user_confirm():
+	if 'user' not in dir(request) or request.user is None or not request.user.admin:
+		return redirect("/")
+
+	if request.method == 'POST':
+		user_id = int(request.form.get("user_id", ""))
+
+		# Verificar si el usuario existe antes de intentar eliminarlo
+		existing_user = library.get_user_id(user_id)
+		if existing_user:
+			library.delete_user(user_id)
+			return redirect('/admin/list_users')
+		else:
+			error_message = "El usuario con el ID proporcionado no existe."
+			return render_template('delete_user_confirm.html', error_message=error_message)
+
+	return render_template('delete_user_confirm.html')
+
 
 @app.route('/admin/list_users')
 def list_users():
