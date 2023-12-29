@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+  <h2>Añadir Libro</h2>
+  <form method="post" action="/admin/add_book">
+    <label for="title">Título*:</label>
+    <input type="text" name="title" required><br>
+    
+    <label for="author">Autor*:</label>
+    <input type="text" name="author" required><br>
+
+    <label for="cover">Portada:</label>
+    <input type="text" name="cover"><br>
+
+    <label for="description">Descripción:</label>
+    <textarea name="description"></textarea><br>
+
+    <label for="num_copies">Número de Copias*:</label>
+    <input type="number" name="num_copies" required><br>
+
+    <input type="submit" value="Añadir Libro">
+  </form>
+</div>
+
+{% endblock %}

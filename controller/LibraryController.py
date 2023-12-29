@@ -1,4 +1,4 @@
-from model import Connection, Book, User, Tema, Publicacion
+from model import Connection, Book, User, Tema, Publicacion, Author
 from model.tools import hash_password
 from model.Tema import Tema
 from model.Publicacion import Publicacion
@@ -169,3 +169,23 @@ class LibraryController:
 
 	def delete_user(self, user_id):
 		db.delete("DELETE FROM User WHERE id = ?", (user_id,))
+
+	def add_author(self, name):
+		author_id = db.insert("INSERT INTO Author (name) VALUES (?)", (name,))
+		return author_id
+
+	def add_book(self, title, author_id, num_copies, cover=None, description=None):
+		book_id = db.insert(
+			"INSERT INTO Book (title, author, numCopias, cover, description) VALUES (?, ?, ?, ?, ?)",
+			(title, author_id, num_copies, cover, description)
+		)
+		return book_id
+
+	def get_author_by_name(self, author_name):
+		author_info = db.select("SELECT * FROM Author WHERE name = ? LIMIT 1", (author_name,))
+		
+		if author_info:
+			author = Author(author_info[0][0], author_info[0][1])
+			return author
+		else:
+			return None

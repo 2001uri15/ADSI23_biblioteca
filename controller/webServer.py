@@ -142,9 +142,41 @@ def list_users():
 	users = library.get_all_users()
 	return render_template('list_users.html', users=users) 
 
-@app.route('/admin/add_book')
+@app.route('/admin/add_author', methods=['GET', 'POST'])
+def add_author():
+    if 'user' not in dir(request) or request.user is None or not request.user.admin:
+        return redirect("/")
+
+    if request.method == 'POST':
+        name = request.form['name']
+        library.add_author(name)
+        return redirect('/admin')
+
+    return render_template('add_author.html')
+
+@app.route('/admin/add_book', methods=['GET', 'POST'])
 def add_book():
-    return render_template('add_book.html') 
+    if 'user' not in dir(request) or request.user is None or not request.user.admin:
+        return redirect("/")
+
+    if request.method == 'POST':
+        title = request.form['title']
+        author_name = request.form['author']
+        cover = request.form.get('cover', None)
+        description = request.form.get('description', None)
+        num_copies = request.form['num_copies']
+
+        # Obtén el ID del autor existente o añádelo si no existe
+        author = library.get_author_by_name(author_name)
+        if not author:
+            author_id = library.add_author(author_name)
+        else:
+            author_id = author.id
+
+        library.add_book(title, author_id, num_copies, cover, description)
+        return redirect('/admin')
+
+    return render_template('add_book.html')
 	
 
 

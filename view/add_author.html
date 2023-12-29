@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+  <h2>Añadir Autor</h2>
+  <form method="post" action="/admin/add_author">
+    <label for="name">Nombre del Autor:</label>
+    <input type="text" name="name" required><br>
+
+    <input type="submit" value="Añadir Autor">
+  </form>
+</div>
+
+{% endblock %}
