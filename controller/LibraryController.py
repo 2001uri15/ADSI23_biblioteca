@@ -170,6 +170,9 @@ class LibraryController:
 	def delete_user(self, user_id):
 		db.delete("DELETE FROM User WHERE id = ?", (user_id,))
 
+	def delete_book(self, book_id):
+		db.delete("DELETE FROM Book WHERE id = ?", (book_id,))
+
 	def add_author(self, name):
 		author_id = db.insert("INSERT INTO Author (name) VALUES (?)", (name,))
 		return author_id

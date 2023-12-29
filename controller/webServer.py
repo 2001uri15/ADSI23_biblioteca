@@ -141,6 +141,17 @@ def add_user():
     return render_template('add_user.html') 
 
 
+@app.route('/admin/delete_book/<int:book_id>', methods=['POST'])
+def delete_book(book_id):
+	if 'user' not in dir(request) or request.user is None or not request.user.admin:
+		return redirect("/")
+	
+	if request.method == 'POST':
+		idInt = int(book_id)
+		library.delete_book(idInt)
+		return redirect('/catalogue')
+
+
 @app.route('/admin/delete_user/<int:user_id>', methods=['POST'])
 def delete_user(user_id):
 	if 'user' not in dir(request) or request.user is None or not request.user.admin:
