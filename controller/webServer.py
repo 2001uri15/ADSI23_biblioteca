@@ -203,7 +203,6 @@ def ver_tema(tema_id):
             mensaje = request.form.get("mensaje", "")
             if mensaje:
                 library.enviar_mensaje(tema_id, datetime.now(), User.id, mensaje)
-        # Obtener el nombre del tema y los mensajes aquí
         nombre_tema = library.obtener_nombre_tema(tema_id)
         mensajes = library.mostrar_mensaje(tema_id)
-        return render_template('tema.html', nombre_tema=nombre_tema, mensajes=mensajes, tema_id=tema_id, nombreU=nombreU)
+        return render_template('tema.html', nombre_tema=nombre_tema, mensajes=mensajes, tema_id=tema_id)
