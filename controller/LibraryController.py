@@ -189,3 +189,9 @@ class LibraryController:
 			return author
 		else:
 			return None
+
+	def get_total_copies_info(self):
+		# Realiza la consulta para obtener la información del número total de copias de cada libro
+		copies_info = db.select("SELECT id, SUM(numCopias) FROM Book GROUP BY id")
+		total_copies_info = {book_id: num_copies for book_id, num_copies in copies_info}
+		return total_copies_info

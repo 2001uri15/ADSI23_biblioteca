@@ -32,7 +32,11 @@
                         <h5 class="card-title">{{book.title}}</h5>
                         <h6 class="card-subtitle mb-2 text-muted">{{book.author}}</h6>
                         {% if book.description: %}
-                        <p class="card-text">{{book.description}}</p>
+                            <p class="card-text">{{book.description}}</p>
+                        {% endif %}
+
+                        {% if is_admin and total_copies_info %}
+                            <p class="card-text" style="color: #0D6EFD; font-weight: bold;">Copias Totales: {{ total_copies_info[book.id] if book.id in total_copies_info else 0 }}</p>
                         {% endif %}
                     </div>
                 </div>
