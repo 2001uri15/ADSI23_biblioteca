@@ -40,9 +40,12 @@ def catalogue():
 	page = int(request.values.get("page", 1))
 	books, nb_books = library.search_books(title=title, author=author, page=page - 1)
 	total_pages = (nb_books // 6) + 1
-	return render_template('catalogue.html', books=books, title=title, author=author, current_page=page,
+	if 'user' in dir(request) and request.user and request.user.token:
+		return render_template('catalogue.html', books=books, title=title, author=author, current_page=page,
 	                       total_pages=total_pages, max=max, min=min, is_admin=request.user.admin)
-
+	else:
+		return render_template('catalogue.html', books=books, title=title, author=author, current_page=page,
+	                       total_pages=total_pages, max=max, min=min)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
