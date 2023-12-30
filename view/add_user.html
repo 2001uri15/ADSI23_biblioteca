@@ -7,6 +7,15 @@
 <body>
 {% block content %}
   <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="messages">
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
     <h2>Añadir Usuario</h2>
     <form method="post" action="/admin/add_user">
       <label for="name">Nombre:</label>

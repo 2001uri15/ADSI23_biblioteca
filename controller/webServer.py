@@ -1,9 +1,10 @@
 from .LibraryController import LibraryController
-from flask import Flask, render_template, request, make_response, redirect
+from flask import Flask, render_template, request, make_response, redirect, flash
 from datetime import datetime
 
-app = Flask(__name__, static_url_path='', static_folder='../view/static', template_folder='../view/')
 
+app = Flask(__name__, static_url_path='', static_folder='../view/static', template_folder='../view/')
+app.secret_key = 'claveSecreta#ADSI2023'
 
 library = LibraryController()
 
@@ -124,21 +125,29 @@ def admin():
 
 @app.route('/admin/add_user', methods=['GET', 'POST'])
 def add_user():
-    if 'user' not in dir(request) or request.user is None or not request.user.admin:
-        return redirect("/")
+	if 'user' not in dir(request) or request.user is None or not request.user.admin:
+		return redirect("/")
 
-    if request.method == 'POST':
-        name = request.form['name']
-        apellidos = request.form['apellidos']
-        birthdate = request.form['birthdate']
-        email = request.form['email']
-        password = request.form['password']
-        admin = 'admin' in request.form
+	if request.method == 'POST':
+		name = request.form['name']
+		apellidos = request.form['apellidos']
+		birthdate = request.form['birthdate']
+		email = request.form['email']
+		password = request.form['password']
+		admin = 'admin' in request.form
 
-        library.add_user(name, apellidos, birthdate, email, password, admin)
-        return redirect('/admin')
+		# Verificar si ya existe un usuario con el mismo correo electrónico
+		existing_user = library.get_user_by_email(email)
+		if existing_user:
+			flash('Ya existe un usuario con el mismo correo electrónico.', 'error')
+			return redirect(request.url)
 
-    return render_template('add_user.html') 
+
+		library.add_user(name, apellidos, birthdate, email, password, admin)
+		flash('Usuario añadido correctamente.', 'success')
+		return redirect('/admin')
+
+	return render_template('add_user.html') 
 
 
 @app.route('/admin/delete_book/<int:book_id>', methods=['POST'])

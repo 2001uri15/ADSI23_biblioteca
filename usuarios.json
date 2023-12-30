@@ -22,13 +22,6 @@
       "admin": false
     },
     {
-      "nombres": "Juan Ejemplo",
-      "email": "ejemplo@gmail.com",
-      "password": "123456",
-      "id": "S_Faisg",
-      "admin": false
-    },
-    {
       "nombres": "Patricia Ortega",
       "email": "p@gmail.com",
       "password": "1243",

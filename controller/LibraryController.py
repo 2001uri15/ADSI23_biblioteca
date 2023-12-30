@@ -159,6 +159,15 @@ class LibraryController:
 		user_id = db.insert("INSERT INTO User (name, apellidos, creado, email, password, admin) VALUES (?, ?, ?, ?, ?, ?)", (name, apellidos, birthdate, email, hashed_password, admin_value))
 		return user_id
 
+	def get_user_by_email(self, email):
+		user_info = db.select("SELECT * FROM User WHERE email = ? LIMIT 1", (email,))
+		if user_info:
+			user = User(user_info[0][0], user_info[0][1], user_info[0][2], user_info[0][3], user_info[0][4], user_info[0][6])
+			return user
+		else:
+			return None
+
+
 	def get_all_users(self):
 		users = db.select("SELECT * FROM User")
 		user_objects = [
