@@ -144,7 +144,6 @@ def add_user():
 
 
 		library.add_user(name, apellidos, birthdate, email, password, admin)
-		flash('Usuario añadido correctamente.', 'success')
 		return redirect('/admin')
 
 	return render_template('add_user.html') 
