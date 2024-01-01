@@ -91,18 +91,11 @@ def escribir_resena(book_id):
     if 'user' not in dir(request) or request.user is None:
         return redirect("/")
     else:
+        user = request.user
+
         if request.method == 'POST':
-            user = request.user
             mensaje = request.form.get("mensaje", "")
-            if mensaje:
-                # Guardar la reseña en la base de datos
-                #guardar_resena(book_id, user, mensaje)
-                return redirect('/catalogue')
-
-        # Obtener la información del libro para mostrar en la página de escribir reseña
-        book_info = library.get_book_info(book_id)
-        return render_template('escribir_resena.html', book_info=book_info)
-
+        return render_template('escribir_resena.html', book_id=book_id)
 
 #####################################################################
 
@@ -353,3 +346,11 @@ def ver_tema(tema_id):
         nombre_tema = library.obtener_nombre_tema(tema_id)
         mensajes = library.mostrar_mensaje(tema_id)
         return render_template('tema.html', nombre_tema=nombre_tema, mensajes=mensajes, tema_id=tema_id)
+
+@app.route('/ver_libro/<int:book_id>', methods=['GET'])
+def ver_libro(book_id):
+    book_info = library.get_book_info(book_id)
+    if book_info:
+        return render_template('ver_libro.html', book_info=book_info)
+    else:
+        return redirect("/catalogue")
