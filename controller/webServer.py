@@ -84,6 +84,25 @@ def edit_copies(book_id):
     book_info = library.get_book_info(book_id)
     return render_template('edit_copies.html', book_info=book_info)
 
+####EN PROCESO: ESCRIBIR RESENA #################################
+
+@app.route('/escribir_resena/<int:book_id>', methods=['GET', 'POST'])
+def escribir_resena(book_id):
+    if 'user' not in dir(request) or request.user is None:
+        return redirect("/")
+    else:
+        if request.method == 'POST':
+            user = request.user
+            mensaje = request.form.get("mensaje", "")
+            if mensaje:
+                libro = library.get_book_info(book_id) 
+                #guardar_resena(libro, user, mensaje)
+
+        return render_template('escribir_resena.html', book_id=book_id)
+		
+
+#####################################################################
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 	if 'user' in dir(request) and request.user and request.user.token:

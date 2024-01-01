@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="container p-5 my-5 border">
+    <h2>Escribe tu reseña</h2>
+    <form method="post" action="{{ url_for('escribir_resena', book_id=book_info.id) }}">
+        <div class="form-group">
+            <label for="Comentario">Comentario:</label>
+            <input type="text" id="mensaje" name="mensaje" required>
+            <button type="submit">Enviar</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
