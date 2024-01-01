@@ -95,10 +95,8 @@ def escribir_resena(book_id):
             user = request.user
             mensaje = request.form.get("mensaje", "")
             if mensaje:
-                # Guardar la reseña en la base de datos (debes implementar esta función)
+                # Guardar la reseña en la base de datos
                 #guardar_resena(book_id, user, mensaje)
-
-                # Después de guardar la reseña, podrías redirigir al usuario a la página del libro o realizar alguna otra acción.
                 return redirect('/catalogue')
 
         # Obtener la información del libro para mostrar en la página de escribir reseña
