@@ -272,6 +272,7 @@ def perfil():
 	esAmigo = False
 	listas = None
 	misAmigos = None
+	listaPeticiones = None
 	if _id != -1:
 		User = library.get_user_id(_id)
 		UserLogin = request.user
@@ -287,8 +288,9 @@ def perfil():
 			listaAmigos = library.recomendaciones_amigos(User)
 			listaLibros = library.recomendaciones_amigos_libros(User)
 			listas = set(listaAmigos + listaLibros)
+			listaPeticiones = library.obtenerListaPeticiones(User)
 	if User != None:
-		return render_template('perfil.html', User=User, amigosRecom=listas, amigos=misAmigos, esAmigo=esAmigo) #Paso a la vita las dos litas
+		return render_template('perfil.html', User=User, amigosRecom=listas, amigos=misAmigos, esAmigo=esAmigo, peticiones=listaPeticiones) #Paso a la vita las dos litas
 	else:
 		return redirect("/")
 	
@@ -315,6 +317,18 @@ def anadiramigo():
 	amigo_id = request.values.get("amigoid", "/")
 	path = request.values.get("location", "/")
 	# TODO
+	return redirect(path)
+
+@app.route('/anadirpeticion')
+def anadirpeticion():
+	if 'user' not in dir(request) or request.user is None:
+		return redirect("/")
+	amigo_id = request.values.get("amigoid", "/")
+	mi_id = request.values.get("id", "/")
+	path = request.values.get("location", "/")
+	
+	library.anadirPeticionAmistad(mi_id, amigo_id)
+
 	return redirect(path)
 
 @app.route('/gest_anadir_foro')

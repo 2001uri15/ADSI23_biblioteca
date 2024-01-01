@@ -104,18 +104,19 @@ class LibraryController:
 	### AMIGOS:
 
 	def recomendaciones_amigos(self, user):
-		user = db.select("SELECT * from Amigo WHERE idUsuario = ?", (user.id,))
+		userq = db.select("SELECT * from Amigo WHERE idUsuario = ?", (user.id,))
 		amigoRecom = []
-		if len(user) > 0:
-			for amigo in user:
+		if len(userq) > 0:
+			for amigo in userq:
 				# Amigos de mis amigos
-				amigos_de_amigo = db.select("SELECT * FROM Amigo WHERE idUsuario = ?", (amigo[1],))
+				amigos_de_amigo = db.select("SELECT * FROM Amigo WHERE idUsuario = ? AND idAmigo is not ?", (amigo[1], user.id, ))
 
 				for amigo_de_amigo in amigos_de_amigo:
 					# Información del amigo de mi amigo
 					amigo_info = db.select("SELECT * FROM User WHERE id = ?", (amigo_de_amigo[1],))
 					amigo_obj = User(amigo_info[0][0], amigo_info[0][1], amigo_info[0][2], amigo_info[0][3], amigo_info[0][4], amigo_info[0][6])
-					amigoRecom.append(amigo_obj)
+					if (user.id is not amigo_obj.id):
+						amigoRecom.append(amigo_obj)
 
 			return amigoRecom
 		else:
@@ -159,6 +160,25 @@ class LibraryController:
 			return amigoRecom
 		else:
 			return amigoRecom
+
+	def obtenerListaPeticiones(self, user):
+		userq = db.select("SELECT idUsuario from PeticionAmigo WHERE idAmigo = ?", (user.id,))
+		misPeti = []
+		if len(userq) > 0:
+			for amigo in userq:
+				# Información de mi amigo
+				user1 = db.select("SELECT * from User WHERE id = ? ", (amigo[0], ))
+				amigo_obj = User(user1[0][0], user1[0][1], user1[0][2], user1[0][3], user1[0][4], user1[0][6])
+				misPeti.append(amigo_obj)
+				print(amigo_obj)
+
+			return misPeti
+		else:
+			return misPeti
+	
+	def anadirPeticionAmistad(self, idUsuari, idAmigo):
+		db.select("INSERT INTO PeticionAmigo VALUES (?, ?)", (idUsuari, idAmigo,))
+
 	
 	### FUNCIONES ADMIN:
 	

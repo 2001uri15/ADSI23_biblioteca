@@ -129,7 +129,7 @@
                         {%endfor%}
                     </tbody>
                 </table>
-            </div>
+            </div>               
             {%endif%}
 
             {% if amigosRecom: %}
@@ -151,6 +151,36 @@
                     </thead>
                     <tbody>
                         {%for amigo in amigosRecom%}
+                        <tr>
+                            <th scope="row"></th>
+                            <td><a class="recom_amigos" href="/perfil?id={{amigo.id}}">{{amigo.name}} {{amigo.apellidos}}</a></td>
+                            <td><button type="button" class="btn btn-primary btn-sm recom_soli"><a href="/anadirpeticion?amigoid={{amigo.id}}&id={{User.id}}&location=/perfil" style="color: white; text-decoration: none;">Enviar Petición</a></button></td>
+                        </tr>
+                        {%endfor%}
+                    </tbody>
+                </table>
+            </div>
+            {%endif%}
+
+            {% if peticiones: %}
+            <!-- RECOMENDACIONES DE AMIGOS -->
+            <nav class="navbar bg-body-tertiary">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#recomAmigos">Peticiones de Amistad</a>
+                </div>
+            </nav>
+            <div>
+                <!--TABLA DE LOS AMIGOS RECOMENDADOS-->
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="width: 3%;">#</th>
+                            <th scope="col" style="width: 77%;">Nombre</th>
+                            <th scope="col" style="width: 20%;">Button</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {%for amigo in peticiones%}
                         <tr>
                             <th scope="row"></th>
                             <td><a class="recom_amigos" href="/perfil?id={{amigo.id}}">{{amigo.name}} {{amigo.apellidos}}</a></td>

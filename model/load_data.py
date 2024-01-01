@@ -92,6 +92,16 @@ cur.execute("""
 """)
 
 cur.execute("""
+	CREATE TABLE PeticionAmigo(
+		idUsuario integer,
+		idAmigo integer,
+		Primary key(idUsuario, idAmigo),
+		FOREIGN KEY(idUsuario) REFERENCES User(id),
+		FOREIGN KEY(idAmigo) REFERENCES user(id)
+	)
+""")
+
+cur.execute("""
 	CREATE TABLE Tema(
 		id integer primary key AUTOINCREMENT,
 		nombre varchar(100),
