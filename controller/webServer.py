@@ -95,11 +95,16 @@ def escribir_resena(book_id):
             user = request.user
             mensaje = request.form.get("mensaje", "")
             if mensaje:
-                libro = library.get_book_info(book_id) 
-                #guardar_resena(libro, user, mensaje)
+                # Guardar la reseña en la base de datos (debes implementar esta función)
+                #guardar_resena(book_id, user, mensaje)
 
-        return render_template('escribir_resena.html', book_id=book_id)
-		
+                # Después de guardar la reseña, podrías redirigir al usuario a la página del libro o realizar alguna otra acción.
+                return redirect('/catalogue')
+
+        # Obtener la información del libro para mostrar en la página de escribir reseña
+        book_info = library.get_book_info(book_id)
+        return render_template('escribir_resena.html', book_info=book_info)
+
 
 #####################################################################
 
