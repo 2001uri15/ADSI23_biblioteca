@@ -1,7 +1,8 @@
-from model import Connection, Book, User, Tema, Publicacion, Author
+from model import Connection, Book, User, Tema, Publicacion, Author, Resena
 from model.tools import hash_password
 from model.Tema import Tema
 from model.Publicacion import Publicacion
+#from model.Resena import Resena
 
 
 db = Connection()
@@ -15,6 +16,7 @@ class LibraryController:
 			cls.__instance.__initialized = False
 		return cls.__instance
 
+	#### LIBROS:
 
 	def search_books(self, title="", author="", limit=6, page=0):
 		count = db.select("""
@@ -37,7 +39,8 @@ class LibraryController:
 			for b in res
 		]
 		return books, count
-
+	
+	### TEMAS:
 	def obtener_nombre_tema(self, idTema=""):
 		res = db.select("SELECT nombre FROM Tema WHERE id = ? LIMIT 1", (idTema,))
 		return res[0][0]
@@ -62,6 +65,8 @@ class LibraryController:
 			tema_creado.append(mostrar)
 		return tema_creado
 	
+	### MENSAJES:
+
 	def mostrar_mensaje(self, idTema=""):
 		mensaje_mostrar = db.select("SELECT * FROM Publicacion WHERE idTema = ?", (idTema,))
 		mensajes_enviados = []
@@ -73,6 +78,8 @@ class LibraryController:
 	def enviar_mensaje(self, idTema="", fecha="", idUsuario="", texto=""):
 		mensaje_anadir = db.insert("INSERT INTO Publicacion (idTema,fecha,idUsuario,texto) VALUES (?,?,?,?)", (idTema,fecha,idUsuario,texto,))
 
+	### USERS:
+		
 	def get_user(self, email, password):
 		user = db.select("SELECT * from User WHERE email = ? AND password = ?", (email, hash_password(password)))
 		if len(user) > 0:
@@ -93,6 +100,8 @@ class LibraryController:
 			return User(user[0][0], user[0][1], user[0][2], user[0][3], user[0][4], user[0][6])
 		else:
 			return None
+
+	### AMIGOS:
 
 	def recomendaciones_amigos(self, user):
 		user = db.select("SELECT * from Amigo WHERE idUsuario = ?", (user.id,))
@@ -151,7 +160,7 @@ class LibraryController:
 		else:
 			return amigoRecom
 	
-
+	### FUNCIONES ADMIN:
 	
 	def add_user(self, name, apellidos, birthdate, email, password, admin):
 		hashed_password = hash_password(password)
@@ -218,3 +227,20 @@ class LibraryController:
 			return book
 		else:
 			return None
+
+	### RESEÑAS
+		
+	def anadir_resena(self, nombreLibro="", editorial="", autor="", nomUsu="", puntuacion=0, comentario=""):
+		resena_anadir = db.insert(
+            "INSERT INTO Resena (nombreLibro, editorial, autor, nomUsu, puntuacion, comment) VALUES (?, ?, ?, ?, ?, ?)",
+            (nombreLibro, editorial, autor, nomUsu, puntuacion, comentario,)
+        )
+
+	def mostrar_resenas(self):
+		resenas_mostrar = db.select("SELECT * FROM Resena")
+		resenas_creadas = []
+		for resena_info in resenas_mostrar:
+			mostrar = Resena(resena_info[0], resena_info[1], resena_info[2], resena_info[3], resena_info[4], resena_info[5], resena_info[6])
+			resenas_creadas.append(mostrar)
+			return resenas_creadas
+		

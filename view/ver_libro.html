@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="container p-5 my-5 border">
+
+    <h2>{{ book_info.title }}</h2>
+    <p>Autor: {{ book_info.author }}</p>
+    <img src="{{ book_info.cover }}" alt="Portada del libro">
+
+    <p>Descripción: {{ book_info.description }}</p>
+
+    <a href="{{ url_for('escribir_resena', book_id=book_info.id) }}" class="btn btn-primary">Escribir Reseña</a>
+    <a href="{{ url_for('catalogue') }}" class="btn btn-secondary">Volver al Catálogo</a>
+
+
+</div>
+{% endblock %}

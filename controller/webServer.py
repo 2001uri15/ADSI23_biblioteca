@@ -91,14 +91,12 @@ def escribir_resena(book_id):
     if 'user' not in dir(request) or request.user is None:
         return redirect("/")
     else:
-        if request.method == 'POST':
-            user = request.user
-            mensaje = request.form.get("mensaje", "")
-            if mensaje:
-                libro = library.get_book_info(book_id) 
-                #guardar_resena(libro, user, mensaje)
+        user = request.user
 
+        if request.method == 'POST':
+            mensaje = request.form.get("mensaje", "")
         return render_template('escribir_resena.html', book_id=book_id)
+
 		
 
 #####################################################################
@@ -350,3 +348,11 @@ def ver_tema(tema_id):
         nombre_tema = library.obtener_nombre_tema(tema_id)
         mensajes = library.mostrar_mensaje(tema_id)
         return render_template('tema.html', nombre_tema=nombre_tema, mensajes=mensajes, tema_id=tema_id)
+
+@app.route('/ver_libro/<int:book_id>', methods=['GET'])
+def ver_libro(book_id):
+    book_info = library.get_book_info(book_id)
+    if book_info:
+        return render_template('ver_libro.html', book_info=book_info)
+    else:
+        return redirect("/catalogue")
