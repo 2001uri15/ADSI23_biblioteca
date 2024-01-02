@@ -58,44 +58,57 @@ def catalogue():
 	"""
 	if 'user' in dir(request) and request.user and request.user.token:
 		return render_template('catalogue.html', books=books, title=title, author=author, current_page=page,
-	                       total_pages=total_pages, max=max, min=min, is_admin=request.user.admin)
+						   total_pages=total_pages, max=max, min=min, is_admin=request.user.admin)
 	else:
 		return render_template('catalogue.html', books=books, title=title, author=author, current_page=page,
-	                       total_pages=total_pages, max=max, min=min)
+						   total_pages=total_pages, max=max, min=min)
 	"""
 
 @app.route('/edit_copies/<int:book_id>', methods=['GET', 'POST'])
 def edit_copies(book_id):
-    # Verificar si el usuario es administrador
-    if 'user' not in dir(request) or request.user is None or not request.user.admin:
-        return redirect("/")
+	# Verificar si el usuario es administrador
+	if 'user' not in dir(request) or request.user is None or not request.user.admin:
+		return redirect("/")
 
-    if request.method == 'POST':
-        # Obtener el nuevo número de copias desde el formulario
-        new_num_copies = int(request.form.get('new_num_copies', 0))
+	if request.method == 'POST':
+		# Obtener el nuevo número de copias desde el formulario
+		new_num_copies = int(request.form.get('new_num_copies', 0))
 
-        # Actualizar el número de copias en la base de datos
-        library.update_num_copies(book_id, new_num_copies)
+		# Actualizar el número de copias en la base de datos
+		library.update_num_copies(book_id, new_num_copies)
 
-        # Redirigir de vuelta al catálogo
-        return redirect('/catalogue')
+		# Redirigir de vuelta al catálogo
+		return redirect('/catalogue')
 
-    # Obtener información del libro para mostrar en el formulario
-    book_info = library.get_book_info(book_id)
-    return render_template('edit_copies.html', book_info=book_info)
+	# Obtener información del libro para mostrar en el formulario
+	book_info = library.get_book_info(book_id)
+	return render_template('edit_copies.html', book_info=book_info)
 
 ####EN PROCESO: ESCRIBIR RESENA #################################
 
 @app.route('/escribir_resena/<int:book_id>', methods=['GET', 'POST'])
 def escribir_resena(book_id):
-    if 'user' not in dir(request) or request.user is None:
-        return redirect("/")
-    else:
-        user = request.user
+	# Verificar si hay un usuario autenticado
+	if 'user' not in dir(request) or request.user is None:
+		return redirect("/")
 
-        if request.method == 'POST':
-            mensaje = request.form.get("mensaje", "")
-        return render_template('escribir_resena.html', book_id=book_id)
+	# Obtener el usuario autenticado
+	user = request.user.name
+	book_info = library.get_book_info(book_id)
+	titulo = book_info.title
+	autor = book_info.author
+	editorial = book_info.editorial
+	if request.method == 'POST':
+		# Obtener el comentario y la puntuación del formulario
+		comentario = request.form.get('mensaje', '')
+		puntuacion = request.form.get('puntuacion', '')
+		library.anadir_resena(titulo,editorial, autor,user,puntuacion,comentario)
+
+		# Aquí puedes agregar la lógica para guardar la reseña en la base de datos
+		# o realizar cualquier otra acción con el comentario y la puntuación.
+
+	return render_template('escribir_resena.html', book_id=book_id)
+
 
 #####################################################################
 
@@ -214,53 +227,53 @@ def list_users():
 
 @app.route('/admin/add_author', methods=['GET', 'POST'])
 def add_author():
-    if 'user' not in dir(request) or request.user is None or not request.user.admin:
-        return redirect("/")
+	if 'user' not in dir(request) or request.user is None or not request.user.admin:
+		return redirect("/")
 
-    if request.method == 'POST':
-        name = request.form['name']
-        library.add_author(name)
-        return redirect('/admin')
+	if request.method == 'POST':
+		name = request.form['name']
+		library.add_author(name)
+		return redirect('/admin')
 
-    return render_template('add_author.html')
+	return render_template('add_author.html')
 
 @app.route('/admin/add_book', methods=['GET', 'POST'])
 def add_book():
-    if 'user' not in dir(request) or request.user is None or not request.user.admin:
-        return redirect("/")
+	if 'user' not in dir(request) or request.user is None or not request.user.admin:
+		return redirect("/")
 
-    if request.method == 'POST':
-        title = request.form['title']
-        author_name = request.form['author']
-        cover = request.form.get('cover', None)
-        description = request.form.get('description', None)
-        num_copies = request.form['num_copies']
+	if request.method == 'POST':
+		title = request.form['title']
+		author_name = request.form['author']
+		cover = request.form.get('cover', None)
+		description = request.form.get('description', None)
+		num_copies = request.form['num_copies']
 
-        # Obtén el ID del autor existente o añádelo si no existe
-        author = library.get_author_by_name(author_name)
-        if not author:
-            author_id = library.add_author(author_name)
-        else:
-            author_id = author.id
+		# Obtén el ID del autor existente o añádelo si no existe
+		author = library.get_author_by_name(author_name)
+		if not author:
+			author_id = library.add_author(author_name)
+		else:
+			author_id = author.id
 
 
 		# Validar que num_copies sea un número positivo o cero
-        num_copies = request.form['num_copies']
-        try:
-            num_copies = int(num_copies)
-            if num_copies < 0:
-                flash('Please enter a non-negative integer for the number of copies.', 'error')
-                return redirect(request.url)
-        except ValueError:
-            flash('Please enter a valid integer for the number of copies.', 'error')
-            return redirect(request.url)
+		num_copies = request.form['num_copies']
+		try:
+			num_copies = int(num_copies)
+			if num_copies < 0:
+				flash('Please enter a non-negative integer for the number of copies.', 'error')
+				return redirect(request.url)
+		except ValueError:
+			flash('Please enter a valid integer for the number of copies.', 'error')
+			return redirect(request.url)
 
-        library.add_book(title, author_id, num_copies, cover, description)
-        return redirect('/admin')
+		library.add_book(title, author_id, num_copies, cover, description)
+		return redirect('/admin')
 
 		
 
-    return render_template('add_book.html')
+	return render_template('add_book.html')
 	
 
 
@@ -349,22 +362,25 @@ def gest_anadir_foro():
 
 @app.route('/tema/<int:tema_id>', methods=['GET', 'POST'])
 def ver_tema(tema_id):
-    if 'user' not in dir(request) or request.user is None:
-        return redirect("/")
-    else:
-        if request.method == 'POST':
-            User = request.user
-            mensaje = request.form.get("mensaje", "")
-            if mensaje:
-                library.enviar_mensaje(tema_id, datetime.now(), User.id, mensaje)
-        nombre_tema = library.obtener_nombre_tema(tema_id)
-        mensajes = library.mostrar_mensaje(tema_id)
-        return render_template('tema.html', nombre_tema=nombre_tema, mensajes=mensajes, tema_id=tema_id)
+	if 'user' not in dir(request) or request.user is None:
+		return redirect("/")
+	else:
+		if request.method == 'POST':
+			User = request.user
+			mensaje = request.form.get("mensaje", "")
+			if mensaje:
+				library.enviar_mensaje(tema_id, datetime.now(), User.id, mensaje)
+		nombre_tema = library.obtener_nombre_tema(tema_id)
+		mensajes = library.mostrar_mensaje(tema_id)
+		return render_template('tema.html', nombre_tema=nombre_tema, mensajes=mensajes, tema_id=tema_id)
 
 @app.route('/ver_libro/<int:book_id>', methods=['GET'])
 def ver_libro(book_id):
-    book_info = library.get_book_info(book_id)
-    if book_info:
-        return render_template('ver_libro.html', book_info=book_info)
-    else:
+    if 'user' not in dir(request) or request.user is None:
         return redirect("/catalogue")
+
+    user = request.user
+    book_info = library.get_book_info(book_id)
+    resenas = library.buscar_resenas_por_libro(book_info.title)
+
+    return render_template('ver_libro.html', book_info=book_info, resenas=resenas)

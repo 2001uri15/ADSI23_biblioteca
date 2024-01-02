@@ -16,6 +16,21 @@
     <a href="{{ url_for('escribir_resena', book_id=book_info.id) }}" class="btn btn-primary">Escribir Reseña</a>
     <a href="{{ url_for('catalogue') }}" class="btn btn-secondary">Volver al Catálogo</a>
 
+    <h3>Reseñas:</h3>
+    {% if resenas %}
+        <ul>
+            {% for resena in resenas %}
+                <li>
+                    <p>Usuario: {{ resena.nombreUsuario }}</p>
+                    <p>Puntuación: {{ resena.puntuacion }}</p>
+                    <p>Comentario: {{ resena.comentario }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay reseñas para este libro.</p>
+    {% endif %}
+
 
 </div>
 {% endblock %}

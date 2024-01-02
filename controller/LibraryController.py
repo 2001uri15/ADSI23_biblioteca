@@ -263,4 +263,9 @@ class LibraryController:
 			mostrar = Resena(resena_info[0], resena_info[1], resena_info[2], resena_info[3], resena_info[4], resena_info[5], resena_info[6])
 			resenas_creadas.append(mostrar)
 			return resenas_creadas
-		
+	
+	def buscar_resenas_por_libro(self, title):
+		resenas = db.select("SELECT * FROM Resena WHERE nombreLibro = ?", (title,))
+        
+		resenas_obj = [Resena(r[0], r[1], r[2], r[3], r[4], r[5], r[6]) for r in resenas]
+		return resenas_obj
