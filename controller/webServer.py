@@ -276,26 +276,32 @@ def perfil():
 	_id = int (request.values.get("id", -1))
 	esAmigo = False
 	listas = None
-	misAmigos = None
+	amigos = None
 	listaPeticiones = None
+	soyYo = None
+	UserLogin= None
 	if _id != -1:
 		User = library.get_user_id(_id)
 		UserLogin = request.user
 		esAmigo = library.somosAmigos(UserLogin, User)
+		soyYo = User.id == UserLogin.id
+		#lista de amigos
+		amigos = library.misAmigos(User)
 	else:
 		if 'user' not in dir(request) or request.user is None:
 			User = None
 		else:
+			soyYo=True
 			User = request.user
 			# Mi lista de amigos
-			misAmigos = library.misAmigos(User)
+			amigos = library.misAmigos(User)
 			# Buscar las dos listas: Amigos de amigo y recomendaciones de usuarios por libros
 			listaAmigos = library.recomendaciones_amigos(User)
 			listaLibros = library.recomendaciones_amigos_libros(User)
 			listas = set(listaAmigos + listaLibros)
 			listaPeticiones = library.obtenerListaPeticiones(User)
 	if User != None:
-		return render_template('perfil.html', User=User, amigosRecom=listas, amigos=misAmigos, esAmigo=esAmigo, peticiones=listaPeticiones) #Paso a la vita las dos litas
+		return render_template('perfil.html', User=User, id=_id, soyYo=soyYo, UserLogin=UserLogin, amigosRecom=listas, amigos=amigos, esAmigo=esAmigo, peticiones=listaPeticiones) #Paso a la vista las dos litas
 	else:
 		return redirect("/")
 	
