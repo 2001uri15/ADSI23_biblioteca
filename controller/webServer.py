@@ -93,14 +93,22 @@ def escribir_resena(book_id):
 		return redirect("/")
 
 	# Obtener el usuario autenticado
-	user = request.user.id
-	#book_info = library.get_book_info(book_id)
+	user = request.user.name
+	book_info = library.get_book_info(book_id)
+	titulo = book_info.title
+	autor = book_info.author
+	editorial = book_info.editorial
 	if request.method == 'POST':
 		# Obtener el comentario y la puntuación del formulario
 		comentario = request.form.get('mensaje', '')
 		puntuacion = request.form.get('puntuacion', '')
-		library.anadir_resena(user, book_id, puntuacion, comentario)
+		library.anadir_resena(titulo,editorial, autor,user,puntuacion,comentario)
+
+		# Aquí puedes agregar la lógica para guardar la reseña en la base de datos
+		# o realizar cualquier otra acción con el comentario y la puntuación.
+
 	return render_template('escribir_resena.html', book_id=book_id)
+
 
 #####################################################################
 
@@ -326,8 +334,23 @@ def anadiramigo():
 	if 'user' not in dir(request) or request.user is None:
 		return redirect("/")
 	amigo_id = request.values.get("amigoid", "/")
+	mi_id = request.values.get("id", "/")
 	path = request.values.get("location", "/")
-	# TODO
+	
+	library.aceptarAmistad(mi_id, amigo_id)
+
+	return redirect(path)
+
+@app.route('/eliminaramigo')
+def eliminaramigo():
+	if 'user' not in dir(request) or request.user is None:
+		return redirect("/")
+	amigo_id = request.values.get("amigoid", "/")
+	mi_id = request.values.get("id", "/")
+	path = request.values.get("location", "/")
+	
+	library.eliminarAmigo(mi_id, amigo_id)
+
 	return redirect(path)
 
 @app.route('/anadirpeticion')
@@ -339,6 +362,18 @@ def anadirpeticion():
 	path = request.values.get("location", "/")
 	
 	library.anadirPeticionAmistad(mi_id, amigo_id)
+
+	return redirect(path)
+
+@app.route('/eliminarpeticion')
+def eliminarpeticion():
+	if 'user' not in dir(request) or request.user is None:
+		return redirect("/")
+	amigo_id = request.values.get("amigoid", "/")
+	mi_id = request.values.get("id", "/")
+	path = request.values.get("location", "/")
+	
+	library.eliminarPeticion(mi_id, amigo_id)
 
 	return redirect(path)
 
@@ -379,6 +414,6 @@ def ver_libro(book_id):
 
     user = request.user
     book_info = library.get_book_info(book_id)
-    resenas = library.buscar_resenas_por_libro(book_id)
+    resenas = library.buscar_resenas_por_libro(book_info.title)
 
     return render_template('ver_libro.html', book_info=book_info, resenas=resenas)

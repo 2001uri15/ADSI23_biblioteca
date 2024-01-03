@@ -114,31 +114,44 @@ class LibraryController:
 				for amigo_de_amigo in amigos_de_amigo:
 					# Información del amigo de mi amigo
 					amigo_info = db.select("SELECT * FROM User WHERE id = ?", (amigo_de_amigo[1],))
-					amigo_obj = User(amigo_info[0][0], amigo_info[0][1], amigo_info[0][2], amigo_info[0][3], amigo_info[0][4], amigo_info[0][6])
-					if (user.id is not amigo_obj.id):
-						amigoRecom.append(amigo_obj)
+					if len(amigo_info)!=0:
+						amigo_obj = User(amigo_info[0][0], amigo_info[0][1], amigo_info[0][2], amigo_info[0][3], amigo_info[0][4],amigo_info[0][6])
+						if (user.id is not amigo_obj.id):
+							amigoRecom.append(amigo_obj)
 
 			return amigoRecom
 		else:
 			return amigoRecom
 	
-	def misAmigos(self, user):
-		user = db.select("SELECT * from Amigo WHERE idUsuario = ?", (user.id,))
+	def misAmigos(self, usuario):
+		user = db.select("SELECT * from Amigo WHERE idUsuario = ?", (usuario.id,))
 		misAmigos = []
 		if len(user) > 0:
 			for amigo in user:
 				# Información de mi amigo
 				user1 = db.select("SELECT * from User WHERE id = ? ", (amigo[1], ))
-				amigo_obj = User(user1[0][0], user1[0][1], user1[0][2], user1[0][3], user1[0][4], user1[0][6])
-				misAmigos.append(amigo_obj)
-				print(amigo_obj)
+				if len(user1)!=0:
+					amigo_obj = User(user1[0][0], user1[0][1], user1[0][2], user1[0][3], user1[0][4], user1[0][6])
+					misAmigos.append(amigo_obj)
+					print(amigo_obj)
+
+		user2 = db.select("SELECT * from Amigo WHERE idAmigo = ?", (usuario.id,))
+		if len(user2) > 0:
+			for amigo in user2:
+				# Información de mi amigo
+				user11 = db.select("SELECT * from User WHERE id = ? ", (amigo[0], ))
+				if len(user11)!=0:
+					amigo_obj = User(user11[0][0], user11[0][1], user11[0][2], user11[0][3], user11[0][4], user11[0][6])
+					if amigo_obj not in misAmigos:
+						misAmigos.append(amigo_obj)
+						print(amigo_obj)			
 
 			return misAmigos
 		else:
 			return misAmigos
 
 	def somosAmigos(self, user, amigo):
-		somosAmigos = db.select("SELECT 1 FROM Amigo WHERE idUsuario = ? AND idAmigo = ? LIMIT 1", (user.id, amigo.id, ))
+		somosAmigos = db.select("SELECT 1 FROM Amigo WHERE (idUsuario = ? AND idAmigo = ?) or (idAmigo = ? AND idUsuario = ?) LIMIT 1", (user.id, amigo.id, user.id, amigo.id,))
 		return bool(somosAmigos)
 
 	def recomendaciones_amigos_libros(self, user):
@@ -176,8 +189,20 @@ class LibraryController:
 		else:
 			return misPeti
 	
-	def anadirPeticionAmistad(self, idUsuari, idAmigo):
-		db.select("INSERT INTO PeticionAmigo VALUES (?, ?)", (idUsuari, idAmigo,))
+	def anadirPeticionAmistad(self, idAmigo, idUsuario):
+		db.select("INSERT INTO PeticionAmigo VALUES (?, ?)", (idAmigo, idUsuario,))
+
+	def eliminarPeticion(self, idAmigo, idUsuario):
+		db.select("DELETE FROM PeticionAmigo WHERE IdUsuario = ? AND IdAmigo = ?", (idUsuario, idAmigo,))
+
+	def aceptarAmistad(self, idAmigo, idUsuario):
+		db.select("INSERT INTO Amigo VALUES (?, ?)", (idUsuario, idAmigo,))
+		db.select("DELETE FROM PeticionAmigo WHERE IdUsuario = ? AND IdAmigo = ?", (idUsuario, idAmigo,))
+
+	def eliminarAmigo(self, idAmigo, idUsuario):
+		db.select("DELETE FROM Amigo WHERE IdUsuario = ? AND IdAmigo = ?", (idUsuario, idAmigo,))
+		db.select("DELETE FROM Amigo WHERE IdUsuario = ? AND IdAmigo = ?", (idAmigo, idUsuario,))
+
 
 	
 	### FUNCIONES ADMIN:
@@ -250,22 +275,22 @@ class LibraryController:
 
 	### RESEÑAS
 		
-	def anadir_resena(self, idUsuario, idLibro, puntuacion, comentario):
+	def anadir_resena(self, nombreLibro="", editorial="", autor="", nomUsu="", puntuacion=0, comentario=""):
 		resena_anadir = db.insert(
-            "INSERT INTO Resena (idUsuario, idLibro, puntuacion, comentario) VALUES (?, ?, ?, ?)",
-            (idUsuario, idLibro, puntuacion, comentario,)
+            "INSERT INTO Resena (nombreLibro, editorial, autor, nomUsu, puntuacion, comment) VALUES (?, ?, ?, ?, ?, ?)",
+            (nombreLibro, editorial, autor, nomUsu, puntuacion, comentario,)
         )
 
 	def mostrar_resenas(self):
 		resenas_mostrar = db.select("SELECT * FROM Resena")
 		resenas_creadas = []
 		for resena_info in resenas_mostrar:
-			mostrar = Resena(resena_info[5], resena_info[6])
+			mostrar = Resena(resena_info[0], resena_info[1], resena_info[2], resena_info[3], resena_info[4], resena_info[5], resena_info[6])
 			resenas_creadas.append(mostrar)
 			return resenas_creadas
 	
-	def buscar_resenas_por_libro(self, book_id):
-		resenas = db.select("SELECT * FROM Resena WHERE idLibro = ?", (book_id,))
+	def buscar_resenas_por_libro(self, title):
+		resenas = db.select("SELECT * FROM Resena WHERE nombreLibro = ?", (title,))
         
-		resenas_obj = [Resena(r[0], r[1], r[2], r[3], r[4]) for r in resenas]
+		resenas_obj = [Resena(r[0], r[1], r[2], r[3], r[4], r[5], r[6]) for r in resenas]
 		return resenas_obj

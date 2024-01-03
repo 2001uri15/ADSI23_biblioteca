@@ -85,9 +85,9 @@
                     {% if not amigosRecom: %}
                         {% if not soyYo: %}
                             {%if not esAmigo:%}
-                                <button type="button" class="btn btn-primary"><a href="/anadiramigo?=amigoid={{User.id}}&location=/perfil?id={{User.id}}" style="color: white; text-decoration: none;">Añadir amig@</a></button>
+                                <button type="button" class="btn btn-primary"><a href="/anadirpeticion?amigoid={{User.id}}&id={{UserLogin.id}}&location=/perfil" style="color: white; text-decoration: none;">Añadir amig@</a></button>
                             {%else%}
-                                <button type="button" class="btn btn-secondary"><a href="/eliminaramigo?=amigoid={{User.id}}&location=/perfil?id={{User.id}}" style="color: white; text-decoration: none;">Dejar amig@</a></button>
+                                <button type="button" class="btn btn-secondary"><a href="/eliminaramigo?amigoid={{User.id}}&id={{UserLogin.id}}&location=/perfil" style="color: white; text-decoration: none;">Dejar amig@</a></button>
                             {%endif%}
                             <br><br>
                         {%endif%}
@@ -190,8 +190,8 @@
                         <tr>
                             <th scope="row"></th>
                             <td><a class="recom_amigos" href="/perfil?id={{amigo.id}}">{{amigo.name}} {{amigo.apellidos}}</a></td>
-                            <td><button type="button" class="btn btn-primary btn-sm recom_soli"><a href="/anadiramigo?amigoid={{amigo.id}}&location=/perfil" style="color: white; text-decoration: none;">Aceptar Solicitud</a></button>
-                            <button type="button" class="btn btn-primary btn-sm recom_soli"><a href="/eliminarsolicitud?amigoid={{amigo.id}}&location=/perfil" style="color: white; text-decoration: none;">Denegar Solicitud</a></button></td>
+                            <td><button type="button" class="btn btn-primary btn-sm recom_soli"><a href="/anadiramigo?amigoid={{amigo.id}}&id={{User.id}}&location=/perfil" style="color: white; text-decoration: none;">Aceptar Solicitud</a></button>
+                            <button type="button" class="btn btn-primary btn-sm recom_soli"><a href="/eliminarsolicitud?amigoid={{amigo.id}}&id={{User.id}}&location=/perfil" style="color: white; text-decoration: none;">Denegar Solicitud</a></button></td>
                         </tr>
                         </tr>
                         {%endfor%}
