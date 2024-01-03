@@ -93,22 +93,14 @@ def escribir_resena(book_id):
 		return redirect("/")
 
 	# Obtener el usuario autenticado
-	user = request.user.name
-	book_info = library.get_book_info(book_id)
-	titulo = book_info.title
-	autor = book_info.author
-	editorial = book_info.editorial
+	user = request.user.id
+	#book_info = library.get_book_info(book_id)
 	if request.method == 'POST':
 		# Obtener el comentario y la puntuación del formulario
 		comentario = request.form.get('mensaje', '')
 		puntuacion = request.form.get('puntuacion', '')
-		library.anadir_resena(titulo,editorial, autor,user,puntuacion,comentario)
-
-		# Aquí puedes agregar la lógica para guardar la reseña en la base de datos
-		# o realizar cualquier otra acción con el comentario y la puntuación.
-
+		library.anadir_resena(user, book_id, puntuacion, comentario)
 	return render_template('escribir_resena.html', book_id=book_id)
-
 
 #####################################################################
 
@@ -381,6 +373,6 @@ def ver_libro(book_id):
 
     user = request.user
     book_info = library.get_book_info(book_id)
-    resenas = library.buscar_resenas_por_libro(book_info.title)
+    resenas = library.buscar_resenas_por_libro(book_id)
 
     return render_template('ver_libro.html', book_info=book_info, resenas=resenas)
