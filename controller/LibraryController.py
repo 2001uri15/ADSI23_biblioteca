@@ -122,16 +122,31 @@ class LibraryController:
 			return amigoRecom
 		else:
 			return amigoRecom
+		
+	def somosAmigos(self, user, amigo):
+		somosAmigos = db.select("SELECT 1 FROM Amigo WHERE (idUsuario = ? AND idAmigo = ?) or (idAmigo = ? AND idUsuario = ?) LIMIT 1", (user.id, amigo.id, user.id, amigo.id,))
+		return bool(somosAmigos)
 	
-	def misAmigos(self, usuario):
+	def misAmigos(self, usuario, usuarioLogin):
 		user = db.select("SELECT * from Amigo WHERE idUsuario = ?", (usuario.id,))
 		misAmigos = []
+		estadosAmigos = []
+
 		if len(user) > 0:
 			for amigo in user:
 				# Información de mi amigo
 				user1 = db.select("SELECT * from User WHERE id = ? ", (amigo[1], ))
 				if len(user1)!=0:
 					amigo_obj = User(user1[0][0], user1[0][1], user1[0][2], user1[0][3], user1[0][4], user1[0][6])
+					if self.somosAmigos(usuarioLogin,amigo_obj):
+						estado=1
+					elif self.solicitudMandadaYo(usuarioLogin.id,amigo_obj.id):
+						estado=2
+					elif self.solicitudMandadaEl(usuarioLogin.id,amigo_obj.id):
+						estado=3
+					else:
+						estado=0
+					estadosAmigos.append(estado)
 					misAmigos.append(amigo_obj)
 					print(amigo_obj)
 
@@ -143,16 +158,20 @@ class LibraryController:
 				if len(user11)!=0:
 					amigo_obj = User(user11[0][0], user11[0][1], user11[0][2], user11[0][3], user11[0][4], user11[0][6])
 					if amigo_obj not in misAmigos:
+						if self.somosAmigos(usuarioLogin,amigo_obj):
+							estado=1
+						elif self.solicitudMandadaYo(usuarioLogin.id,amigo_obj.id):
+							estado=2
+						elif self.solicitudMandadaEl(usuarioLogin.id,amigo_obj.id):
+							estado=3
+						else:
+							estado=0
+						estadosAmigos.append(estado)
 						misAmigos.append(amigo_obj)
-						print(amigo_obj)			
+						print(amigo_obj)
 
-			return misAmigos
-		else:
-			return misAmigos
-
-	def somosAmigos(self, user, amigo):
-		somosAmigos = db.select("SELECT 1 FROM Amigo WHERE (idUsuario = ? AND idAmigo = ?) or (idAmigo = ? AND idUsuario = ?) LIMIT 1", (user.id, amigo.id, user.id, amigo.id,))
-		return bool(somosAmigos)
+		amistades=zip(misAmigos,estadosAmigos)		
+		return amistades
 
 	def recomendaciones_amigos_libros(self, user):
 		# Obtengo los libros que he leido

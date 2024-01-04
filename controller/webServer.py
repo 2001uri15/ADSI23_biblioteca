@@ -302,7 +302,7 @@ def perfil():
 		esAmigo = library.somosAmigos(UserLogin, User)
 		soyYo = User.id == UserLogin.id
 		#lista de amigos
-		amigos = library.misAmigos(User)
+		amigos = library.misAmigos(User,UserLogin)
 		solicitudYo=library.solicitudMandadaYo(UserLogin.id,User.id)
 		solicitudEl=library.solicitudMandadaEl(UserLogin.id,User.id)
 	else:
@@ -313,7 +313,7 @@ def perfil():
 			soyYo=True
 			User = request.user
 			# Mi lista de amigos
-			amigos = library.misAmigos(User)
+			amigos = library.misAmigos(User,User)
 			# Buscar las dos listas: Amigos de amigo y recomendaciones de usuarios por libros
 			listaAmigos = library.recomendaciones_amigos(User)
 			listaLibros = library.recomendaciones_amigos_libros(User)
