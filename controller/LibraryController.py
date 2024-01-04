@@ -189,17 +189,17 @@ class LibraryController:
 		else:
 			return misPeti
 	
-	def anadirPeticionAmistad(self, idAmigo, idUsuario):
-		db.select("INSERT INTO PeticionAmigo VALUES (?, ?)", (idAmigo, idUsuario,))
+	def anadirPeticionAmistad(self, idUsuario, idAmigo):
+		db.select("INSERT INTO PeticionAmigo VALUES (?, ?)", (idUsuario, idAmigo,))
 
-	def eliminarPeticion(self, idAmigo, idUsuario):
-		db.select("DELETE FROM PeticionAmigo WHERE IdUsuario = ? AND IdAmigo = ?", (idUsuario, idAmigo,))
+	def eliminarPeticion(self, idUsuario, idAmigo):
+		db.select("DELETE FROM PeticionAmigo WHERE IdUsuario = ? AND IdAmigo = ?", (idAmigo, idUsuario,))
 
-	def aceptarAmistad(self, idAmigo, idUsuario):
+	def aceptarAmistad(self, idUsuario, idAmigo):
 		db.select("INSERT INTO Amigo VALUES (?, ?)", (idUsuario, idAmigo,))
-		db.select("DELETE FROM PeticionAmigo WHERE IdUsuario = ? AND IdAmigo = ?", (idUsuario, idAmigo,))
+		db.select("DELETE FROM PeticionAmigo WHERE IdUsuario = ? AND IdAmigo = ?", (idAmigo, idUsuario,))
 
-	def eliminarAmigo(self, idAmigo, idUsuario):
+	def eliminarAmigo(self, idUsuario, idAmigo):
 		db.select("DELETE FROM Amigo WHERE IdUsuario = ? AND IdAmigo = ?", (idUsuario, idAmigo,))
 		db.select("DELETE FROM Amigo WHERE IdUsuario = ? AND IdAmigo = ?", (idAmigo, idUsuario,))
 
@@ -310,7 +310,4 @@ class LibraryController:
 		if resena_usuario:
 			return resena_usuario
 		return None
-	def obtener_autor_resena(self, idUsuario):
-		usuario = db.select("SELECT * FROM User WHERE id = ?", (idUsuario,))
-		return usuario[0][1] if usuario else f"Usuario {idUsuario}"
 
