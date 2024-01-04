@@ -1,5 +1,5 @@
 from .LibraryController import LibraryController
-from flask import Flask, render_template, request, make_response, redirect, flash
+from flask import Flask, render_template, request, make_response, redirect, flash, url_for
 from datetime import datetime
 
 
@@ -105,7 +105,7 @@ def escribir_resena(book_id):
 			library.anadir_resena(user,book_id,puntuacion,comentario)
 		else:
 			library.editar_resena(user, book_id, puntuacion, comentario)
-		return redirect(path)
+		return redirect(url_for('ver_libro', book_id=book_id))
 		# Aquí puedes agregar la lógica para guardar la reseña en la base de datos
 		# o realizar cualquier otra acción con el comentario y la puntuación.
 
