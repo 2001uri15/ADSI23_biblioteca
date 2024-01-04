@@ -78,7 +78,7 @@
             <tbody>
                 {% for mensaje in mensajes %}
                 <tr>
-                    <td>{{ mensaje.idUsuario }}</td>
+                    <td><a href="/perfil?id={{ mensaje.idUsuario }}">{{ mensaje.idUsuario }}</a></td>
                     <td>{{ mensaje.texto }}</td>
                 </tr>
                 {% endfor %}
