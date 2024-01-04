@@ -21,8 +21,7 @@
 
         <div class="form-group">
             <label for="mensaje">Comentario:</label>
-            <textarea id="mensaje" name="mensaje" required></textarea>
-        </div>
+            <textarea id="mensaje" name="mensaje" required placeholder="{% if resena_existente %}{{ resena_existente.comentario }}{% endif %}"></textarea>        </div>
 
         <button type="submit">Enviar</button>
     </form>

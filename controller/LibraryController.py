@@ -304,4 +304,10 @@ class LibraryController:
 	def comprobar_resena(self, idUsuario, idLibro):
 		resena_usuario = db.select("SELECT 1 FROM Resena WHERE idUsuario = ? AND idLibro = ? LIMIT 1", (idUsuario, idLibro,))
 		return bool(resena_usuario)
+	
+	def obtener_resena(self, idUsuario, idLibro):
+		resena_usuario = db.select("SELECT 1 FROM Resena WHERE idUsuario = ? AND idLibro = ? LIMIT 1", (idUsuario, idLibro,))
+		if resena_usuario:
+			return resena_usuario
+		return None
 

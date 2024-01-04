@@ -13,7 +13,9 @@
 
     <p>Descripción: {{ book_info.description }}</p>
 
-    {% if not existe_resena %}
+    {% if existe_resena %}
+        <a href="{{ url_for('escribir_resena', book_id=book_info.id) }}" class="btn btn-primary">Editar Reseña</a>
+    {% else %}
         <a href="{{ url_for('escribir_resena', book_id=book_info.id) }}" class="btn btn-primary">Escribir Reseña</a>
     {% endif %}
     <a href="{{ url_for('catalogue') }}" class="btn btn-secondary">Volver al Catálogo</a>
@@ -26,9 +28,6 @@
                     <p>Usuario: {{ resena.idUsuario }}</p>
                     <p>Puntuación: {{ resena.puntuacion }}</p>
                     <p>Comentario: {{ resena.comentario }}</p>
-                    {% if existe_resena %}
-                        <a href="{{ url_for('escribir_resena', book_id=book_info.id) }}" class="btn btn-primary">Editar Reseña</a>
-                    {% endif %}
                 </li>
             {% endfor %}
         </ul>

@@ -93,10 +93,12 @@ def escribir_resena(book_id):
 		return redirect("/")
 
 	# Obtener el usuario autenticado
-	
 	user = request.user.id
 	existe = library.comprobar_resena(user, book_id)
-	path = request.values.get("location", "/")
+	resena_existente = None
+	if existe:
+		resena_existente = library.obtener_resena(user, book_id)
+
 	if request.method == 'POST':
 		# Obtener el comentario y la puntuación del formulario
 		comentario = request.form.get('mensaje', '')
@@ -109,7 +111,7 @@ def escribir_resena(book_id):
 		# Aquí puedes agregar la lógica para guardar la reseña en la base de datos
 		# o realizar cualquier otra acción con el comentario y la puntuación.
 
-	return render_template('escribir_resena.html', book_id=book_id)
+	return render_template('escribir_resena.html', book_id=book_id, resena_existente=resena_existente)
 
 
 #####################################################################
