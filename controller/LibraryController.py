@@ -2,7 +2,7 @@ from model import Connection, Book, User, Tema, Publicacion, Author, Resena
 from model.tools import hash_password
 from model.Tema import Tema
 from model.Publicacion import Publicacion
-#from model.Resena import Resena
+from model.Resena import Resena
 
 
 db = Connection()
@@ -275,11 +275,14 @@ class LibraryController:
 
 	### RESEÑAS
 		
-	def anadir_resena(self, nombreLibro="", editorial="", autor="", nomUsu="", puntuacion=0, comentario=""):
+	def anadir_resena(self, idUsuario, idLibro, puntuacion, comentario):
 		resena_anadir = db.insert(
-            "INSERT INTO Resena (nombreLibro, editorial, autor, nomUsu, puntuacion, comment) VALUES (?, ?, ?, ?, ?, ?)",
-            (nombreLibro, editorial, autor, nomUsu, puntuacion, comentario,)
-        )
+			"INSERT INTO Resena (idUsuario, idLibro, puntuacion, comentario) VALUES (?, ?, ?, ?)",
+			(idUsuario, idLibro, puntuacion, comentario)
+		)
+	
+	def editar_resena(self, user_id, book_id, puntuacion, comentario):
+		resena_editar = db.update("UPDATE Resena SET puntuacion = ?, comentario = ? WHERE idUsuario = ? AND idLibro = ?", (puntuacion, comentario, user_id, book_id,))
 
 	def mostrar_resenas(self):
 		resenas_mostrar = db.select("SELECT * FROM Resena")
@@ -289,8 +292,16 @@ class LibraryController:
 			resenas_creadas.append(mostrar)
 			return resenas_creadas
 	
-	def buscar_resenas_por_libro(self, title):
-		resenas = db.select("SELECT * FROM Resena WHERE nombreLibro = ?", (title,))
-        
-		resenas_obj = [Resena(r[0], r[1], r[2], r[3], r[4], r[5], r[6]) for r in resenas]
-		return resenas_obj
+	def buscar_resenas_por_libro(self, book_id):
+		resenas = db.select("SELECT * FROM Resena WHERE idLibro = ?", (book_id,))
+		resenas_obj_list = []
+
+		for resena in resenas:
+			resena_obj = Resena(resena[0], resena[1], resena[2], resena[3], resena[4])
+			resenas_obj_list.append(resena_obj)
+		return resenas_obj_list
+	
+	def comprobar_resena(self, idUsuario, idLibro):
+		resena_usuario = db.select("SELECT 1 FROM Resena WHERE idUsuario = ? AND idLibro = ? LIMIT 1", (idUsuario, idLibro,))
+		return bool(resena_usuario)
+

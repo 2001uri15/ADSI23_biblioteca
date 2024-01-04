@@ -93,17 +93,19 @@ def escribir_resena(book_id):
 		return redirect("/")
 
 	# Obtener el usuario autenticado
-	user = request.user.name
-	book_info = library.get_book_info(book_id)
-	titulo = book_info.title
-	autor = book_info.author
-	editorial = book_info.editorial
+	
+	user = request.user.id
+	existe = library.comprobar_resena(user, book_id)
+	path = request.values.get("location", "/")
 	if request.method == 'POST':
 		# Obtener el comentario y la puntuación del formulario
 		comentario = request.form.get('mensaje', '')
 		puntuacion = request.form.get('puntuacion', '')
-		library.anadir_resena(titulo,editorial, autor,user,puntuacion,comentario)
-
+		if not existe:
+			library.anadir_resena(user,book_id,puntuacion,comentario)
+		else:
+			library.editar_resena(user, book_id, puntuacion, comentario)
+		return redirect(path)
 		# Aquí puedes agregar la lógica para guardar la reseña en la base de datos
 		# o realizar cualquier otra acción con el comentario y la puntuación.
 
@@ -409,11 +411,12 @@ def ver_tema(tema_id):
 
 @app.route('/ver_libro/<int:book_id>', methods=['GET'])
 def ver_libro(book_id):
-    if 'user' not in dir(request) or request.user is None:
-        return redirect("/catalogue")
+	if 'user' not in dir(request) or request.user is None:
+		return redirect("/catalogue")
 
-    user = request.user
-    book_info = library.get_book_info(book_id)
-    resenas = library.buscar_resenas_por_libro(book_info.title)
-
-    return render_template('ver_libro.html', book_info=book_info, resenas=resenas)
+	user = request.user.id
+	existe_resena = library.comprobar_resena(user, book_id)
+	book_info = library.get_book_info(book_id)
+	resenas = library.buscar_resenas_por_libro(book_id)
+	
+	return render_template('ver_libro.html', book_info=book_info, resenas=resenas, existe_resena=existe_resena)

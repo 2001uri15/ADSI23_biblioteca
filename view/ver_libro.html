@@ -13,7 +13,9 @@
 
     <p>Descripción: {{ book_info.description }}</p>
 
-    <a href="{{ url_for('escribir_resena', book_id=book_info.id) }}" class="btn btn-primary">Escribir Reseña</a>
+    {% if not existe_resena %}
+        <a href="{{ url_for('escribir_resena', book_id=book_info.id) }}" class="btn btn-primary">Escribir Reseña</a>
+    {% endif %}
     <a href="{{ url_for('catalogue') }}" class="btn btn-secondary">Volver al Catálogo</a>
 
     <h3>Reseñas:</h3>
@@ -24,13 +26,15 @@
                     <p>Usuario: {{ resena.idUsuario }}</p>
                     <p>Puntuación: {{ resena.puntuacion }}</p>
                     <p>Comentario: {{ resena.comentario }}</p>
+                    {% if existe_resena %}
+                        <a href="{{ url_for('escribir_resena', book_id=book_info.id) }}" class="btn btn-primary">Editar Reseña</a>
+                    {% endif %}
                 </li>
             {% endfor %}
         </ul>
     {% else %}
         <p>No hay reseñas para este libro.</p>
     {% endif %}
-
 
 </div>
 {% endblock %}
