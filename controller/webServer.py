@@ -292,17 +292,24 @@ def perfil():
 	listaPeticiones = None
 	soyYo = None
 	UserLogin= None
+	solicitudYo=False
+	solicitudUsuario=False
+	solicitudEl=False
 	if _id != -1:
+		#PERFIL AJENO
 		User = library.get_user_id(_id)
 		UserLogin = request.user
 		esAmigo = library.somosAmigos(UserLogin, User)
 		soyYo = User.id == UserLogin.id
 		#lista de amigos
 		amigos = library.misAmigos(User)
+		solicitudYo=library.solicitudMandadaYo(UserLogin.id,User.id)
+		solicitudEl=library.solicitudMandadaEl(UserLogin.id,User.id)
 	else:
 		if 'user' not in dir(request) or request.user is None:
 			User = None
 		else:
+			#MI PERFIL
 			soyYo=True
 			User = request.user
 			# Mi lista de amigos
@@ -313,7 +320,7 @@ def perfil():
 			listas = set(listaAmigos + listaLibros)
 			listaPeticiones = library.obtenerListaPeticiones(User)
 	if User != None:
-		return render_template('perfil.html', User=User, id=_id, soyYo=soyYo, UserLogin=UserLogin, amigosRecom=listas, amigos=amigos, esAmigo=esAmigo, peticiones=listaPeticiones) #Paso a la vista las dos litas
+		return render_template('perfil.html', User=User, id=_id, soyYo=soyYo, UserLogin=UserLogin, amigosRecom=listas, solicitudYo=solicitudYo, solicitudEl=solicitudEl, amigos=amigos, esAmigo=esAmigo, peticiones=listaPeticiones) #Paso a la vista las dos litas
 	else:
 		return redirect("/")
 	
@@ -366,6 +373,18 @@ def anadirpeticion():
 	path = request.values.get("location", "/")
 	
 	library.anadirPeticionAmistad(mi_id, amigo_id)
+
+	return redirect(path)
+
+@app.route('/cancelarpeticion')
+def cancelarpeticion():
+	if 'user' not in dir(request) or request.user is None:
+		return redirect("/")
+	amigo_id = request.values.get("amigoid", "/")
+	mi_id = request.values.get("id", "/")
+	path = request.values.get("location", "/")
+	
+	library.eliminarPeticion(amigo_id, mi_id)
 
 	return redirect(path)
 

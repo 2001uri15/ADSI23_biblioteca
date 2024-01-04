@@ -192,8 +192,8 @@ class LibraryController:
 	def anadirPeticionAmistad(self, idUsuario, idAmigo):
 		db.select("INSERT INTO PeticionAmigo VALUES (?, ?)", (idUsuario, idAmigo,))
 
-	def eliminarPeticion(self, idUsuario, idAmigo):
-		db.select("DELETE FROM PeticionAmigo WHERE IdUsuario = ? AND IdAmigo = ?", (idAmigo, idUsuario,))
+	def eliminarPeticion(self, idAmigo, idUsuario):
+		db.select("DELETE FROM PeticionAmigo WHERE IdUsuario = ? AND IdAmigo = ?", (idUsuario, idAmigo,))
 
 	def aceptarAmistad(self, idUsuario, idAmigo):
 		db.select("INSERT INTO Amigo VALUES (?, ?)", (idUsuario, idAmigo,))
@@ -203,6 +203,19 @@ class LibraryController:
 		db.select("DELETE FROM Amigo WHERE IdUsuario = ? AND IdAmigo = ?", (idUsuario, idAmigo,))
 		db.select("DELETE FROM Amigo WHERE IdUsuario = ? AND IdAmigo = ?", (idAmigo, idUsuario,))
 
+	def solicitudMandadaYo(self, idUsuario, idAmigo):
+		mandada=False
+		serq = db.select("SELECT idAmigo from PeticionAmigo WHERE idUsuario = ? AND idAmigo = ?", (idUsuario,idAmigo,))
+		if len(serq) > 0:
+			mandada=True
+		return mandada
+	
+	def solicitudMandadaEl(self, idUsuario, idAmigo):
+		mandada=False
+		serq = db.select("SELECT idAmigo from PeticionAmigo WHERE idUsuario = ? AND idAmigo = ?", (idAmigo,idUsuario,))
+		if len(serq) > 0:
+			mandada=True
+		return mandada
 
 	
 	### FUNCIONES ADMIN:

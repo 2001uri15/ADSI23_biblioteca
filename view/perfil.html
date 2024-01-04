@@ -84,7 +84,13 @@
 
                         {% if not soyYo: %}
                             {%if not esAmigo:%}
+                                {%if solicitudYo%}
+                                <button type="button" class="btn btn-primary"><a href="/cancelarpeticion?amigoid={{User.id}}&id={{UserLogin.id}}&location=/perfil" style="color: white; text-decoration: none;">Cancelar solicitud</a></button>
+                                {%elif solicitudEl%}
+                                <button type="button" class="btn btn-primary"><a href="/perfil" style="color: white; text-decoration: none;">Responder solicitud</a></button>
+                                {%else%}
                                 <button type="button" class="btn btn-primary"><a href="/anadirpeticion?amigoid={{User.id}}&id={{UserLogin.id}}&location=/perfil" style="color: white; text-decoration: none;">Añadir amig@</a></button>
+                                {%endif%}
                             {%else%}
                                 <button type="button" class="btn btn-secondary"><a href="/eliminaramigo?amigoid={{User.id}}&id={{UserLogin.id}}&location=/perfil" style="color: white; text-decoration: none;">Dejar amig@</a></button>
                             {%endif%}
@@ -128,6 +134,7 @@
                                 <td><a class="recom_amigos" href="/perfil?id={{amigo.id}}">{{amigo.name}} {{amigo.apellidos}}</a></td>
                                 {%else%}
                                 <td><a class="recom_amigos" href="/perfil">{{amigo.name}} {{amigo.apellidos}}</a></td>
+                                <td></td>
                                 {%endif%}
                         </tr>
                         {%endfor%}
