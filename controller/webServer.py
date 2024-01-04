@@ -416,9 +416,11 @@ def ver_libro(book_id):
 	if 'user' not in dir(request) or request.user is None:
 		return redirect("/catalogue")
 
+	autores_resenas = []
 	user = request.user.id
 	existe_resena = library.comprobar_resena(user, book_id)
 	book_info = library.get_book_info(book_id)
 	resenas = library.buscar_resenas_por_libro(book_id)
+	autores_resenas = [library.obtener_autor_resena(resena.idUsuario) if resena else None for resena in resenas]
 	
-	return render_template('ver_libro.html', book_info=book_info, resenas=resenas, existe_resena=existe_resena)
+	return render_template('ver_libro.html', book_info=book_info, resenas=resenas, existe_resena=existe_resena, autores_resenas=autores_resenas)
