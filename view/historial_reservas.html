@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css">
+
+{% endblock %}
+
+{% block content %}
+<div class="container p-5 my-5 border">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Lista de Reservas</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Título del Libro</th>
+                        <th>Fecha de Reserva</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reserva in reservas %}
+                        <tr>
+                            <td>{{ reserva[0] }}</td>
+                            <td>{{ reserva[1] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

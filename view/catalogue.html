@@ -41,6 +41,12 @@
                             <p class="card-text">{{book.description}}</p>
                         {% endif %}
                         <a href="{{ url_for('ver_libro', book_id=book.id) }}" class="btn btn-primary">Ver Libro</a>
+
+                        {% if userLogin: %}
+                        <form method="post" action="/add_booking?book_id={{ book.id }}&user_id={{ userLogin.id }}" style="display:inline;">
+                            <button type="submit" class="btn btn-danger d-flex align-items-center">Reservar</button>
+                        </form>
+                        {% endif %}
                     
                         {% if is_admin and total_copies_info %}
                             <p class="card-text" style="color: #0D6EFD; font-weight: bold;">Copias Totales: {{ total_copies_info[book.id] if book.id in total_copies_info else 0 }}</p>

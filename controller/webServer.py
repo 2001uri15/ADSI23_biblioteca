@@ -45,15 +45,19 @@ def catalogue():
 	# Verificar si el usuario es administrador
 	is_admin = 'user' in dir(request) and request.user and request.user.admin
 
+	# Conseguir el usuario logueado
+	if 'user' in dir(request):
+		userLogin = request.user
+
 	# Obtener información adicional para el administrador
 	total_copies_info = None
 	if is_admin:
 		total_copies_info = library.get_total_copies_info()
 		return render_template('catalogue.html', books=books, title=title, author=author, current_page=page,
-								total_pages=total_pages, max=max, min=min, is_admin=is_admin, total_copies_info=total_copies_info)
+								total_pages=total_pages, max=max, min=min, is_admin=is_admin, total_copies_info=total_copies_info, userLogin=userLogin)
 	else:
 		return render_template('catalogue.html', books=books, title=title, author=author, current_page=page,
-								total_pages=total_pages, max=max, min=min)
+								total_pages=total_pages, max=max, min=min, userLogin=userLogin)
 
 	"""
 	if 'user' in dir(request) and request.user and request.user.token:
@@ -441,3 +445,29 @@ def ver_libro(book_id):
 	resenas = library.buscar_resenas_por_libro(book_id)
 	
 	return render_template('ver_libro.html', book_info=book_info, resenas=resenas, existe_resena=existe_resena)
+
+# Reservas
+
+@app.route('/add_booking', methods=['POST'])
+def add_booking():
+	if 'user' not in dir(request) or request.user is None:
+		return redirect("/catalogue")
+
+	user_id = request.args.get('user_id', type=int)
+	book_id = request.args.get('book_id', type=int)
+
+	print(user_id)
+
+	library.anadir_reserva(user_id, book_id)
+	
+	return redirect("/catalogue")
+
+@app.route('/historial_reservas', methods=['GET'])
+def historial_reservas():
+	if 'user' not in dir(request) or request.user is None:
+		return redirect("/perfil")
+	
+	user_id = request.args.get('user_id', type=int)
+
+	reservas = library.mostrar_reservas(user_id)
+	return render_template('historial_reservas.html', reservas=reservas) 

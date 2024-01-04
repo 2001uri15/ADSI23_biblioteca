@@ -1,4 +1,6 @@
-from model import Connection, Book, User, Tema, Publicacion, Author, Resena
+from datetime import datetime
+from datetime import timedelta
+from model import Connection, Book, User, Tema, Publicacion, Author, Resena, Reserva
 from model.tools import hash_password
 from model.Tema import Tema
 from model.Publicacion import Publicacion
@@ -343,3 +345,26 @@ class LibraryController:
 			return resena_usuario
 		return None
 
+	### RESERVAS
+
+	def anadir_reserva(self, idUsuario, idLibro):
+		fechaReserva = datetime.now()
+		fechaDevolucion = fechaReserva + timedelta(days=60)
+
+		print(fechaReserva, fechaDevolucion)
+
+		reserva_anadir = db.insert(
+			"INSERT INTO Reserva (idUsuario, idLibro, fechaReserva, fechaDevolucion) VALUES (?, ?, ?, ?)",
+			(idUsuario, idLibro, fechaReserva, fechaDevolucion)
+		)
+
+	def mostrar_reservas(self, idUsuario):
+		reservas_mostrar = db.select("SELECT * FROM Reserva WHERE idUsuario = ?", (idUsuario,))
+		print(idUsuario)
+		reservas_creadas = []
+		for reserva_info in reservas_mostrar:
+			libro = self.get_book_info(reserva_info[2])
+			mostrar = [libro.title, reserva_info[3]]
+			reservas_creadas.append(mostrar)
+
+		return reservas_creadas
