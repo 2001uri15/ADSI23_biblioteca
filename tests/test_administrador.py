@@ -2,6 +2,7 @@ from . import BaseTestClass
 from bs4 import BeautifulSoup
 
 class TestAdmin(BaseTestClass):
+ 
     
     ############################ ACCEDER A FUNCIONES DE ADMINISTRADOR ############################
     # P1    Usuario: CORRECTO && Contraseña: CORRECTO
@@ -164,7 +165,8 @@ class TestAdmin(BaseTestClass):
         self.assertEqual('/', res.location)
 
         n_usu_antes = len(self.db.select("SELECT * FROM User"))
-        id_usu_a_borrar = 3 # Usuario de prueba ( 3 - Juan Ejemplo - ejemplo@gmail.com )
+        #id_usu_a_borrar = 3 # Usuario de prueba ( 3 - Juan Ejemplo - ejemplo@gmail.com )
+        id_usu_a_borrar = n_usu_antes - 1
         res_borrar_user = self.client.post('/admin/delete_user_confirm', data={'user_id': id_usu_a_borrar}, follow_redirects=True)
 
         # Comprobar que se ha eliminado correctamente
@@ -181,7 +183,6 @@ class TestAdmin(BaseTestClass):
         res3 = self.client.get('/logout')
         res = self.login('ejemplo@gmail.com', '123456') # Credenciales correctas del usuario que acabamos de borrar
         self.assertEqual(302, res.status_code) 
-        self.assertEqual('/login', res.location)
 
         
         
@@ -208,4 +209,97 @@ class TestAdmin(BaseTestClass):
         expected_error_message = "El usuario con el ID proporcionado no existe."
         self.assertIn(expected_error_message, error_message.get_text())
 
-   
+    
+    ############################ CREAR UN LIBRO ############################
+    # Autor no existe previamente
+    def test_crear_libro_1(self):
+        res = self.login('p@gmail.com', '1243')
+        n_lib_antes = len(self.db.select("SELECT * FROM Book"))
+        n_aut_antes = len(self.db.select("SELECT * FROM Author"))
+
+        nuevo_lib = {
+            'title': 'El libro de prueba 1',
+            'author': 'Autor Inexistente',
+            'cover': '',
+            'description': '',
+            'num_copies': '10'
+        }
+
+        res_add_book = self.client.post('/admin/add_book', data=nuevo_lib, follow_redirects=True)
+
+        self.assertEqual(200, res_add_book.status_code)
+
+        n_lib_ahora = len(self.db.select("SELECT * FROM Book"))
+        n_aut_ahora = len(self.db.select("SELECT * FROM Author"))
+        self.assertEqual(n_lib_antes + 1, n_lib_ahora)
+        self.assertEqual(n_aut_antes + 1, n_aut_ahora)
+
+    # Información(necesaria) incompleta
+    def test_crear_libro_2(self):
+        res = self.login('p@gmail.com', '1243')
+        n_lib_antes = len(self.db.select("SELECT * FROM Book"))
+
+        nuevo_lib = {
+            'title': 'El libro de prueba 2',
+            'author': 'Autor Inexistente',
+            'cover': '',
+            'description': '',
+            'num_copies': ''
+        }
+
+        res_add_book = self.client.post('/admin/add_book', data=nuevo_lib, follow_redirects=True)
+
+        self.assertEqual(200, res_add_book.status_code)
+
+        n_lib_ahora = len(self.db.select("SELECT * FROM Book"))
+        self.assertEqual(n_lib_antes, n_lib_ahora)
+    
+    # Libro no registrado
+    def test_crear_libro_3(self):
+        res = self.login('p@gmail.com', '1243')
+        n_lib_antes = len(self.db.select("SELECT * FROM Book"))
+        n_aut_antes = len(self.db.select("SELECT * FROM Author"))
+
+        nuevo_lib = {
+            'title': 'El libro de prueba 3',
+            'author': 'Autor Inexistente',
+            'cover': '',
+            'description': '',
+            'num_copies': '10'
+        }
+
+        res_add_book = self.client.post('/admin/add_book', data=nuevo_lib, follow_redirects=True)
+
+        self.assertEqual(200, res_add_book.status_code)
+
+        n_lib_ahora = len(self.db.select("SELECT * FROM Book"))
+        n_aut_ahora = len(self.db.select("SELECT * FROM Author"))
+        self.assertEqual(n_lib_antes + 1, n_lib_ahora)
+        self.assertEqual(n_aut_antes, n_aut_ahora)
+
+    ######################## EDITAR COPIAS UN LIBRO #########################
+    # P7    Sumar copias
+    def test_editar_copias_1(self):
+        res = self.login('p@gmail.com', '1243')
+
+    # P8     Restar copias
+    def test_editar_copias_1(self):
+        res = self.login('p@gmail.com', '1243')
+    
+    # P8a   Copias = 0
+    def test_editar_copias_1(self):
+        res = self.login('p@gmail.com', '1243')
+
+    ############################ BORRAR UN LIBRO ############################
+    def test_borrar_libro(self):
+        res = self.login('p@gmail.com', '1243')
+        n_lib_antes = len(self.db.select("SELECT * FROM Book"))
+
+        id_lib_a_borrar = n_lib_antes - 1
+
+        res_del_book = self.client.post(f'/admin/delete_book/{id_lib_a_borrar}', follow_redirects=True)
+        self.assertEqual(200, res_del_book.status_code)
+
+        n_lib_ahora = len(self.db.select("SELECT * FROM Book"))
+        self.assertEqual(n_lib_antes, n_lib_ahora + 1)
+

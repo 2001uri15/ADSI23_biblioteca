@@ -36,6 +36,7 @@ def index():
 
 @app.route('/catalogue')
 def catalogue():
+	userLogin = None
 	title = request.values.get("title", "")
 	author = request.values.get("author", "")
 	page = int(request.values.get("page", 1))
