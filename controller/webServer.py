@@ -405,13 +405,13 @@ def eliminarpeticion():
 
 	return redirect(path)
 
-@app.route('/gest_anadir_foro')
+@app.route('/gest_anadir_foro', methods=['GET', 'POST'])
 def gest_anadir_foro():
 	if 'user' not in dir(request) or request.user is None:
 		return redirect("/")
 	else:
 		User = request.user
-		nombre = request.values.get("nombre_tema", "/")
+		nombre = request.form.get('nombre')
 		comprobar = library.comprobar_tema(nombre)
 		path = request.values.get("location", "/")
 		if not comprobar:
