@@ -21,7 +21,7 @@ class TestAdmin(BaseTestClass):
         res_admin = self.client.get('/admin')
         self.assertEqual(200, res_admin.status_code)
 
-
+    
     # P2    Usuario: CORRECTO && Contraseña: INCORRECTO
     def test_acceso_admin_2(self):
         # Hacemos login como administrador
@@ -33,7 +33,7 @@ class TestAdmin(BaseTestClass):
         res2 = self.client.get('/')
         page = BeautifulSoup(res2.data, features="html.parser")
         self.assertNotEqual('Menú Administrador', page.find('header').find('ul').find_all('li')[-3].get_text())
-
+    
     # P2a   Usuario: INCORRECTO && Contraseña: CORRECTO
     def test_acceso_admin_3(self):
         # Hacemos login como administrador
@@ -45,7 +45,7 @@ class TestAdmin(BaseTestClass):
         res2 = self.client.get('/')
         page = BeautifulSoup(res2.data, features="html.parser")
         self.assertNotEqual('Menú Administrador', page.find('header').find('ul').find_all('li')[-3].get_text())
-
+    
     # P2b   Usuario: INCORRECTO && Contraseña: INCORRECTO
     def test_acceso_admin_4(self):
         # Hacemos login como administrador
@@ -57,7 +57,7 @@ class TestAdmin(BaseTestClass):
         res2 = self.client.get('/')
         page = BeautifulSoup(res2.data, features="html.parser")
         self.assertNotEqual('Menú Administrador', page.find('header').find('ul').find_all('li')[-3].get_text())
-
+    
     # PE    Credenciales correctas pero no es administrador
     def test_acceso_no_admin(self):
         # Hacemos login como administrador
@@ -74,7 +74,7 @@ class TestAdmin(BaseTestClass):
         res_admin = self.client.get('/admin')
         self.assertEqual(302, res_admin.status_code)
         self.assertEqual('/', res_admin.location)
-
+    
 
     # P3    Cerrar Sesión como Administrador
     def test_cerrar_ses_admin(self):
@@ -90,7 +90,7 @@ class TestAdmin(BaseTestClass):
         res4 = self.client.get('/')
         self.assertNotIn('token', ''.join(res4.headers.values()))
         self.assertNotIn('time', ''.join(res4.headers.values()))
-
+    
     ############################ CREAR UN USUARIO ############################
     # P4    El usu no existe previamente
     def test_crear_usu_1(self):
@@ -154,7 +154,7 @@ class TestAdmin(BaseTestClass):
         # Check the specific error message content
         expected_error_message = "Ya existe un usuario con el mismo correo electrónico."
         self.assertIn(expected_error_message, error_message.get_text())
-
+    
     
     ############################ BORRAR UN USUARIO ############################
     # P5    Id proporcionado es de un usuario existente
@@ -183,7 +183,7 @@ class TestAdmin(BaseTestClass):
         res3 = self.client.get('/logout')
         res = self.login('ejemplo@gmail.com', '123456') # Credenciales correctas del usuario que acabamos de borrar
         self.assertEqual(302, res.status_code) 
-
+    
         
         
     # P5a   ID proporcionado es de un usuario no registrado
@@ -208,7 +208,7 @@ class TestAdmin(BaseTestClass):
         self.assertIsNotNone(error_message, "Error message not found in the response")
         expected_error_message = "El usuario con el ID proporcionado no existe."
         self.assertIn(expected_error_message, error_message.get_text())
-
+    
     
     ############################ CREAR UN LIBRO ############################
     # Autor no existe previamente
@@ -233,7 +233,7 @@ class TestAdmin(BaseTestClass):
         n_aut_ahora = len(self.db.select("SELECT * FROM Author"))
         self.assertEqual(n_lib_antes + 1, n_lib_ahora)
         self.assertEqual(n_aut_antes + 1, n_aut_ahora)
-
+    
     # Información(necesaria) incompleta
     def test_crear_libro_2(self):
         res = self.login('p@gmail.com', '1243')
@@ -276,30 +276,84 @@ class TestAdmin(BaseTestClass):
         n_aut_ahora = len(self.db.select("SELECT * FROM Author"))
         self.assertEqual(n_lib_antes + 1, n_lib_ahora)
         self.assertEqual(n_aut_antes, n_aut_ahora)
-
+    
+    
     ######################## EDITAR COPIAS UN LIBRO #########################
     # P7    Sumar copias
     def test_editar_copias_1(self):
         res = self.login('p@gmail.com', '1243')
+        id_libro_a_editar = 1
 
+        #copias_antes = self.db.select_one(f"SELECT numCopias FROM Book WHERE id = {id_libro_a_editar}")['numCopias']
+        copias_antes = self.db.select("SELECT numCopias FROM Book WHERE id = 1")[0][0]
+        #print("ANTES: ", copias_antes)
+        nuevas_copias = copias_antes + 100
+        datos = {
+            'new_num_copies': nuevas_copias
+        }
+
+        res_edit_book = self.client.post('/edit_copies/1', data=datos, follow_redirects=True)
+        self.assertEqual(200, res_edit_book.status_code)
+
+        #copias_ahora = self.db.select_one(f"SELECT numCopias FROM Book WHERE id = {id_libro_a_editar}")['numCopias']
+        copias_ahora = self.db.select("SELECT numCopias FROM Book WHERE id = 1")[0][0]
+        
+        #print("AHORA: ", copias_ahora)
+        self.assertNotEqual(copias_antes, copias_ahora)
+        self.assertEqual(copias_antes + 100, copias_ahora)
+
+    
     # P8     Restar copias
-    def test_editar_copias_1(self):
+    def test_editar_copias_2(self):
         res = self.login('p@gmail.com', '1243')
+        id_libro_a_editar = 1
+
+        copias_antes = self.db.select("SELECT numCopias FROM Book WHERE id = 1")[0][0]
+        nuevas_copias = copias_antes - 50
+        datos = {
+            'new_num_copies': nuevas_copias
+        }
+
+        res_edit_book = self.client.post('/edit_copies/1', data=datos, follow_redirects=True)
+        self.assertEqual(200, res_edit_book.status_code)
+
+        copias_ahora = self.db.select("SELECT numCopias FROM Book WHERE id = 1")[0][0]
+        
+        self.assertNotEqual(copias_antes, copias_ahora)
+        self.assertEqual(copias_antes - 50, copias_ahora)
     
     # P8a   Copias = 0
-    def test_editar_copias_1(self):
+    def test_editar_copias_3(self):
         res = self.login('p@gmail.com', '1243')
+        id_libro_a_editar = 3
 
+        copias_antes = self.db.select("SELECT numCopias FROM Book WHERE id = 3")[0][0]
+        nuevas_copias = 0
+        datos = {
+            'new_num_copies': nuevas_copias
+        }
+
+        res_edit_book = self.client.post('/edit_copies/3', data=datos, follow_redirects=True)
+        self.assertEqual(200, res_edit_book.status_code)
+
+        copias_ahora = self.db.select("SELECT numCopias FROM Book WHERE id = 3")[0][0]
+        
+        self.assertNotEqual(copias_antes, copias_ahora)
+        self.assertEqual(0, copias_ahora)
+        self.assertEqual(1, len(self.db.select("SELECT * FROM Book WHERE id = 3")))
+    
+    
     ############################ BORRAR UN LIBRO ############################
     def test_borrar_libro(self):
         res = self.login('p@gmail.com', '1243')
         n_lib_antes = len(self.db.select("SELECT * FROM Book"))
 
-        id_lib_a_borrar = n_lib_antes - 1
+        id_lib_a_borrar = n_lib_antes
 
         res_del_book = self.client.post(f'/admin/delete_book/{id_lib_a_borrar}', follow_redirects=True)
         self.assertEqual(200, res_del_book.status_code)
 
         n_lib_ahora = len(self.db.select("SELECT * FROM Book"))
         self.assertEqual(n_lib_antes, n_lib_ahora + 1)
-
+    
+    
