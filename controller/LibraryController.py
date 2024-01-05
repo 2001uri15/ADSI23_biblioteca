@@ -344,6 +344,9 @@ class LibraryController:
 		if resena_usuario:
 			return resena_usuario
 		return None
+	def obtener_autor_resena(self, idUsuario):
+		usuario = db.select("SELECT * FROM User WHERE id = ?", (idUsuario,))
+		return usuario[0][1] if usuario else f"Usuario {idUsuario}"
 
 	### RESERVAS
 
