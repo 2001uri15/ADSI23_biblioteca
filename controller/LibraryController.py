@@ -111,11 +111,11 @@ class LibraryController:
 		if len(userq) > 0:
 			for amigo in userq:
 				# Amigos de mis amigos
-				amigos_de_amigo = db.select("SELECT * FROM Amigo WHERE idUsuario = ? AND idAmigo is not ?", (amigo[1], user.id, ))
+				amigos_de_amigo = db.select("SELECT idAmigo FROM Amigo WHERE idAmigo NOT IN (SELECT idAmigo FROM Amigo WHERE idUsuario = ?) AND idAmigo NOT IN (SELECT idAmigo FROM PeticionAmigo WHERE idUsuario = ?) AND idUsuario = ?", (user.id, user.id, amigo[1], ))
 
 				for amigo_de_amigo in amigos_de_amigo:
 					# Información del amigo de mi amigo
-					amigo_info = db.select("SELECT * FROM User WHERE id = ?", (amigo_de_amigo[1],))
+					amigo_info = db.select("SELECT * FROM User WHERE id = ?", (amigo_de_amigo[0],))
 					if len(amigo_info)!=0:
 						amigo_obj = User(amigo_info[0][0], amigo_info[0][1], amigo_info[0][2], amigo_info[0][3], amigo_info[0][4],amigo_info[0][6])
 						if (user.id is not amigo_obj.id):
@@ -182,7 +182,7 @@ class LibraryController:
 		if len(libro) > 0:
 			for amigo in libro:
 				# Que usuarios han leido los libros que he leido yo
-				librosComun = db.select("SELECT idUsuario FROM Reserva WHERE idLibro = ?", (amigo[0],))
+				librosComun = db.select("SELECT idUsuario FROM Reserva WHERE idLibro = ? AND idUsuario NOT IN (SELECT idAmigo FROM Amigo WHERE idUsuario = ?)", (amigo[0], user.id, ))
 				for usuario in librosComun:
 					# Obtengo su información
 					usu = db.select("SELECT * FROM User WHERE id = ?", (usuario[0],))
