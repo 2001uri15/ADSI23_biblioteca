@@ -121,6 +121,7 @@ class TestAdmin(BaseTestClass):
     
     # P4a   El usu ya existe previamente
     def test_crear_usu_2(self):
+        # Login como administrador
         res = self.login('p@gmail.com', '1243')
         self.assertEqual(302, res.status_code)
         self.assertEqual('/', res.location)
@@ -129,7 +130,7 @@ class TestAdmin(BaseTestClass):
             'name': 'Nombre',
             'apellidos': 'Apellido',
             'birthdate': '2001-01-01',
-            'email': 'ejemplo@gmail.com',   # este email ya está registrado
+            'email': 'p@gmail.com',   # este email ya está registrado
             'password': '123456'
         }
 
@@ -145,5 +146,73 @@ class TestAdmin(BaseTestClass):
         expected_error_message = "Ya existe un usuario con el mismo correo electrónico."
         self.assertIn(expected_error_message, error_message.get_text())
 
+    # P5    Id proporcionado es de un usuario existente
+    def test_borrar_usu_1(self):
+        # Login como administrador
+        res = self.login('p@gmail.com', '1243')
+        self.assertEqual(302, res.status_code)
+        self.assertEqual('/', res.location)
 
-    #def borrar_usu(self):
+        id_usu_a_borrar = 3 # Usuario de prueba ( 3 - Juan Ejemplo - ejemplo@gmail.com )
+        res_borrar_user = self.client.post('/admin/delete_user_confirm', data={'user_id': id_usu_a_borrar}, follow_redirects=True)
+
+        # Comprobar que se ha eliminado correctamente
+        self.assertEqual(200, res_borrar_user.status_code)
+        soup = BeautifulSoup(res_borrar_user.data, features="html.parser")
+
+        # Comprobar si el usuario con el ID que hemos borrado está presente en la lista
+        deleted_user_info = soup.find('li', {'class': 'list-group-item'}, string=f'{id_usu_a_borrar}')
+        self.assertIsNone(deleted_user_info, f"User with ID {id_usu_a_borrar} still found in the list")
+
+        # Intentamos hacer login en el perfil que acabamos de crear (y no nos debería dejar)
+        res3 = self.client.get('/logout')
+        res = self.login('ejemplo@gmail.com', '123456') # Credenciales correctas del usuario que acabamos de borrar
+        self.assertEqual(302, res.status_code) 
+        self.assertEqual('/login', res.location)
+
+        
+        
+    # P5a   ID proporcionado es de un usuario no registrado
+    def test_borrar_usu_2(self):
+        # Login como administrador
+        res = self.login('p@gmail.com', '1243')
+        self.assertEqual(302, res.status_code)
+        self.assertEqual('/', res.location)
+
+        id_usu_a_borrar = 999 # Usuario no registrado
+        res_borrar_user = self.client.post('/admin/delete_user_confirm', data={'user_id': id_usu_a_borrar}, follow_redirects=True)
+
+        # Comprobar que se ha eliminado correctamente
+        self.assertEqual(200, res_borrar_user.status_code)
+        soup = BeautifulSoup(res_borrar_user.data, features="html.parser")
+
+        # Buscar el mensaje que indica que el ID no existe
+        error_message = soup.find('div', {'class': 'alert alert-danger'})
+        self.assertIsNotNone(error_message, "Error message not found in the response")
+        expected_error_message = "El usuario con el ID proporcionado no existe."
+        self.assertIn(expected_error_message, error_message.get_text())
+
+    # P5b   Borrar usuario desde lista de usuarios
+    def test_borrar_usu_3(self):
+        # Log in as an administrator
+        res_login = self.login('p@gmail.com', '1243')
+        self.assertEqual(302, res_login.status_code)
+        self.assertEqual('/', res_login.location)
+
+        # Assume you are on the list_users page
+        res_list_users = self.client.get('/admin/list_users')
+        self.assertEqual(200, res_list_users.status_code)
+
+        # Assume you are trying to delete a user with ID 1 (replace with an existing user ID)
+        usuario_id_a_borrar = 7
+
+        # Send a POST request to delete the user by clicking the delete button
+        res_delete_user = self.client.post(f'/admin/delete_user/{usuario_id_a_borrar}', follow_redirects=True)
+
+        # Check if the user is no longer in the list
+        self.assertEqual(200, res_delete_user.status_code)
+        soup = BeautifulSoup(res_delete_user.data, features="html.parser")
+
+        # Check if the user with the specified ID is not present in the list anymore
+        deleted_user_info = soup.find('li', {'class': 'list-group-item'}, string=f'{usuario_id_a_borrar}')
+        self.assertIsNone(deleted_user_info, f"User with ID {usuario_id_a_borrar} still found in the list")
