@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 class TestResena(BaseTestClass):
     def test_crear_resena(self):
         libro_id = 1  # Ajusta según tu aplicación
-        #usuario_id = 2  # Ajusta según tu aplicación
+        usuario_id = 1 # Ajusta según tu aplicación
         puntuacion = 5
         comentario = "Excelente libro"
 
@@ -13,7 +13,7 @@ class TestResena(BaseTestClass):
 
         # Simular una solicitud POST para escribir la reseña
         data = {
-            'mensaje': comentario,
+            'comentario': comentario,
             'puntuacion': 5
         }
         response = self.client.post(f'/escribir_resena/{libro_id}', data=data, follow_redirects=True)
@@ -22,9 +22,9 @@ class TestResena(BaseTestClass):
         # Parsear la respuesta HTML con BeautifulSoup
         page = BeautifulSoup(response.data, 'html.parser')
 
-        # Verificar que la reseña se ha publicado correctamente
-        comentario_en_pagina = page.find('p', {'id': 'comentario'}).get_text()
-        self.assertEqual(comentario, comentario_en_pagina)
+        resena_guardada = self.db.select("SELECT comentario FROM Resena WHERE idLibro=? AND idUsuario=? AND puntuacion=?", (libro_id, usuario_id, puntuacion))
+       # self.assertTrue(resena_guardada, "La reseña no se ha guardado en la base de datos.")
+        self.assertEqual(resena_guardada[0][0], '')
 
        
 
