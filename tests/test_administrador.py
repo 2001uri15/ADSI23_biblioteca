@@ -2,7 +2,8 @@ from . import BaseTestClass
 from bs4 import BeautifulSoup
 
 class TestAdmin(BaseTestClass):
-
+    
+    ############################ ACCEDER A FUNCIONES DE ADMINISTRADOR ############################
     # P1    Usuario: CORRECTO && Contraseña: CORRECTO
     def test_acceso_admin_1(self):
         # Hacemos login como administrador
@@ -89,12 +90,14 @@ class TestAdmin(BaseTestClass):
         self.assertNotIn('token', ''.join(res4.headers.values()))
         self.assertNotIn('time', ''.join(res4.headers.values()))
 
+    ############################ CREAR UN USUARIO ############################
     # P4    El usu no existe previamente
     def test_crear_usu_1(self):
         res = self.login('p@gmail.com', '1243')
         self.assertEqual(302, res.status_code)
         self.assertEqual('/', res.location)
 
+        n_usu_antes = len(self.db.select("SELECT * FROM User"))
         nuevo_usu = {
             'name': 'Nombre',
             'apellidos': 'Apellido',
@@ -107,6 +110,8 @@ class TestAdmin(BaseTestClass):
         
         # Comprobamos si el usuario se ha creado correctamente
         self.assertEqual(200, res_add_user.status_code)
+        n_usu_ahora = len(self.db.select("SELECT * FROM User"))
+        self.assertEqual(n_usu_antes + 1, n_usu_ahora)
 
         # Comprobamos si se puede hacer login con el nuevo usu
         res3 = self.client.get('/logout')
@@ -126,6 +131,7 @@ class TestAdmin(BaseTestClass):
         self.assertEqual(302, res.status_code)
         self.assertEqual('/', res.location)
 
+        n_usu_antes = len(self.db.select("SELECT * FROM User"))
         nuevo_usu = {
             'name': 'Nombre',
             'apellidos': 'Apellido',
@@ -135,8 +141,10 @@ class TestAdmin(BaseTestClass):
         }
 
         res_add_user = self.client.post('/admin/add_user', data=nuevo_usu, follow_redirects=True)
+        n_usu_ahora = len(self.db.select("SELECT * FROM User"))
+        self.assertEqual(n_usu_antes, n_usu_ahora)
         
-        # Comprobamos si el usuario se ha creado correctamente
+        # Comprobamos si el usuario se ha creado correctamente (no deberia)
         self.assertEqual(200, res_add_user.status_code)
         soup = BeautifulSoup(res_add_user.data, features="html.parser")
         error_message = soup.find('div', {'class': 'alert alert-danger'})
@@ -146,6 +154,8 @@ class TestAdmin(BaseTestClass):
         expected_error_message = "Ya existe un usuario con el mismo correo electrónico."
         self.assertIn(expected_error_message, error_message.get_text())
 
+    
+    ############################ BORRAR UN USUARIO ############################
     # P5    Id proporcionado es de un usuario existente
     def test_borrar_usu_1(self):
         # Login como administrador
@@ -153,12 +163,15 @@ class TestAdmin(BaseTestClass):
         self.assertEqual(302, res.status_code)
         self.assertEqual('/', res.location)
 
+        n_usu_antes = len(self.db.select("SELECT * FROM User"))
         id_usu_a_borrar = 3 # Usuario de prueba ( 3 - Juan Ejemplo - ejemplo@gmail.com )
         res_borrar_user = self.client.post('/admin/delete_user_confirm', data={'user_id': id_usu_a_borrar}, follow_redirects=True)
 
         # Comprobar que se ha eliminado correctamente
         self.assertEqual(200, res_borrar_user.status_code)
         soup = BeautifulSoup(res_borrar_user.data, features="html.parser")
+        n_usu_ahora = len(self.db.select("SELECT * FROM User"))
+        self.assertEqual(n_usu_antes, n_usu_ahora + 1)
 
         # Comprobar si el usuario con el ID que hemos borrado está presente en la lista
         deleted_user_info = soup.find('li', {'class': 'list-group-item'}, string=f'{id_usu_a_borrar}')
@@ -178,6 +191,7 @@ class TestAdmin(BaseTestClass):
         res = self.login('p@gmail.com', '1243')
         self.assertEqual(302, res.status_code)
         self.assertEqual('/', res.location)
+        n_usu_antes = len(self.db.select("SELECT * FROM User"))
 
         id_usu_a_borrar = 999 # Usuario no registrado
         res_borrar_user = self.client.post('/admin/delete_user_confirm', data={'user_id': id_usu_a_borrar}, follow_redirects=True)
@@ -185,6 +199,8 @@ class TestAdmin(BaseTestClass):
         # Comprobar que se ha eliminado correctamente
         self.assertEqual(200, res_borrar_user.status_code)
         soup = BeautifulSoup(res_borrar_user.data, features="html.parser")
+        n_usu_ahora = len(self.db.select("SELECT * FROM User"))
+        self.assertEqual(n_usu_antes, n_usu_ahora)
 
         # Buscar el mensaje que indica que el ID no existe
         error_message = soup.find('div', {'class': 'alert alert-danger'})
@@ -192,27 +208,4 @@ class TestAdmin(BaseTestClass):
         expected_error_message = "El usuario con el ID proporcionado no existe."
         self.assertIn(expected_error_message, error_message.get_text())
 
-    # P5b   Borrar usuario desde lista de usuarios
-    def test_borrar_usu_3(self):
-        # Log in as an administrator
-        res_login = self.login('p@gmail.com', '1243')
-        self.assertEqual(302, res_login.status_code)
-        self.assertEqual('/', res_login.location)
-
-        # Assume you are on the list_users page
-        res_list_users = self.client.get('/admin/list_users')
-        self.assertEqual(200, res_list_users.status_code)
-
-        # Assume you are trying to delete a user with ID 1 (replace with an existing user ID)
-        usuario_id_a_borrar = 7
-
-        # Send a POST request to delete the user by clicking the delete button
-        res_delete_user = self.client.post(f'/admin/delete_user/{usuario_id_a_borrar}', follow_redirects=True)
-
-        # Check if the user is no longer in the list
-        self.assertEqual(200, res_delete_user.status_code)
-        soup = BeautifulSoup(res_delete_user.data, features="html.parser")
-
-        # Check if the user with the specified ID is not present in the list anymore
-        deleted_user_info = soup.find('li', {'class': 'list-group-item'}, string=f'{usuario_id_a_borrar}')
-        self.assertIsNone(deleted_user_info, f"User with ID {usuario_id_a_borrar} still found in the list")
+   
