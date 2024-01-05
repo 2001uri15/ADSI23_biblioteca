@@ -5,7 +5,7 @@ class TestAdmin(BaseTestClass):
  
     
     ############################ ACCEDER A FUNCIONES DE ADMINISTRADOR ############################
-    # P1    Usuario: CORRECTO && Contraseña: CORRECTO
+    # CodPrueba: 1      --> Usuario: CORRECTO && Contraseña: CORRECTO
     def test_acceso_admin_1(self):
         # Hacemos login como administrador
         res = self.login('p@gmail.com', '1243')
@@ -22,7 +22,7 @@ class TestAdmin(BaseTestClass):
         self.assertEqual(200, res_admin.status_code)
 
     
-    # P2    Usuario: CORRECTO && Contraseña: INCORRECTO
+    # CodPrueba: 2      --> Usuario: CORRECTO && Contraseña: INCORRECTO
     def test_acceso_admin_2(self):
         # Hacemos login como administrador
         res = self.login('p@gmail.com', '12435')
@@ -34,7 +34,7 @@ class TestAdmin(BaseTestClass):
         page = BeautifulSoup(res2.data, features="html.parser")
         self.assertNotEqual('Menú Administrador', page.find('header').find('ul').find_all('li')[-3].get_text())
     
-    # P2a   Usuario: INCORRECTO && Contraseña: CORRECTO
+    # CodPrueba: 2a      --> Usuario: INCORRECTO && Contraseña: CORRECTO
     def test_acceso_admin_3(self):
         # Hacemos login como administrador
         res = self.login('pog@gmail.com', '1243')
@@ -46,7 +46,7 @@ class TestAdmin(BaseTestClass):
         page = BeautifulSoup(res2.data, features="html.parser")
         self.assertNotEqual('Menú Administrador', page.find('header').find('ul').find_all('li')[-3].get_text())
     
-    # P2b   Usuario: INCORRECTO && Contraseña: INCORRECTO
+    # CodPrueba: 2b      --> Usuario: INCORRECTO && Contraseña: INCORRECTO
     def test_acceso_admin_4(self):
         # Hacemos login como administrador
         res = self.login('pog@gmail.com', '12435')
@@ -58,7 +58,7 @@ class TestAdmin(BaseTestClass):
         page = BeautifulSoup(res2.data, features="html.parser")
         self.assertNotEqual('Menú Administrador', page.find('header').find('ul').find_all('li')[-3].get_text())
     
-    # PE    Credenciales correctas pero no es administrador
+    # CodPrueba: 2c      --> Credenciales correctas pero no es administrador
     def test_acceso_no_admin(self):
         # Hacemos login como administrador
         res = self.login('james@gmail.com', '123456')
@@ -76,7 +76,7 @@ class TestAdmin(BaseTestClass):
         self.assertEqual('/', res_admin.location)
     
 
-    # P3    Cerrar Sesión como Administrador
+    # CodPrueba: 3      --> Cerrar Sesión como Administrador
     def test_cerrar_ses_admin(self):
         res = self.login('p@gmail.com', '1243')
         self.assertEqual(302, res.status_code)
@@ -92,7 +92,7 @@ class TestAdmin(BaseTestClass):
         self.assertNotIn('time', ''.join(res4.headers.values()))
     
     ############################ CREAR UN USUARIO ############################
-    # P4    El usu no existe previamente
+    # CodPrueba: 4      --> El usu no existe previamente
     def test_crear_usu_1(self):
         res = self.login('p@gmail.com', '1243')
         self.assertEqual(302, res.status_code)
@@ -125,7 +125,7 @@ class TestAdmin(BaseTestClass):
         page = BeautifulSoup(res_log_2.data, features="html.parser")
         self.assertEqual('Nombre Apellido', page.find('header').find('ul').find_all('li')[-2].get_text())
     
-    # P4a   El usu ya existe previamente
+    # CodPrueba: 4a      --> El usu ya existe previamente
     def test_crear_usu_2(self):
         # Login como administrador
         res = self.login('p@gmail.com', '1243')
@@ -157,7 +157,7 @@ class TestAdmin(BaseTestClass):
     
     
     ############################ BORRAR UN USUARIO ############################
-    # P5    Id proporcionado es de un usuario existente
+    # CodPrueba: 5      --> Id proporcionado es de un usuario existente
     def test_borrar_usu_1(self):
         # Login como administrador
         res = self.login('p@gmail.com', '1243')
@@ -186,7 +186,7 @@ class TestAdmin(BaseTestClass):
     
         
         
-    # P5a   ID proporcionado es de un usuario no registrado
+    # CodPrueba: 5a      --> ID proporcionado es de un usuario no registrado
     def test_borrar_usu_2(self):
         # Login como administrador
         res = self.login('p@gmail.com', '1243')
@@ -211,7 +211,7 @@ class TestAdmin(BaseTestClass):
     
     
     ############################ CREAR UN LIBRO ############################
-    # Autor no existe previamente
+    # CodPrueba: 6a      -->  Autor no existe previamente
     def test_crear_libro_1(self):
         res = self.login('p@gmail.com', '1243')
         n_lib_antes = len(self.db.select("SELECT * FROM Book"))
@@ -234,7 +234,7 @@ class TestAdmin(BaseTestClass):
         self.assertEqual(n_lib_antes + 1, n_lib_ahora)
         self.assertEqual(n_aut_antes + 1, n_aut_ahora)
     
-    # Información(necesaria) incompleta
+    # CodPrueba: 6b      -->  Información(necesaria) incompleta
     def test_crear_libro_2(self):
         res = self.login('p@gmail.com', '1243')
         n_lib_antes = len(self.db.select("SELECT * FROM Book"))
@@ -254,7 +254,7 @@ class TestAdmin(BaseTestClass):
         n_lib_ahora = len(self.db.select("SELECT * FROM Book"))
         self.assertEqual(n_lib_antes, n_lib_ahora)
     
-    # Libro no registrado
+    # CodPrueba: 6c      -->  Libro no registrado
     def test_crear_libro_3(self):
         res = self.login('p@gmail.com', '1243')
         n_lib_antes = len(self.db.select("SELECT * FROM Book"))
@@ -279,7 +279,7 @@ class TestAdmin(BaseTestClass):
     
     
     ######################## EDITAR COPIAS UN LIBRO #########################
-    # P7    Sumar copias
+    # CodPrueba: 7      --> Sumar copias
     def test_editar_copias_1(self):
         res = self.login('p@gmail.com', '1243')
         id_libro_a_editar = 1
@@ -303,7 +303,7 @@ class TestAdmin(BaseTestClass):
         self.assertEqual(copias_antes + 100, copias_ahora)
 
     
-    # P8     Restar copias
+    # CodPrueba: 8      --> Restar copias
     def test_editar_copias_2(self):
         res = self.login('p@gmail.com', '1243')
         id_libro_a_editar = 1
@@ -322,7 +322,7 @@ class TestAdmin(BaseTestClass):
         self.assertNotEqual(copias_antes, copias_ahora)
         self.assertEqual(copias_antes - 50, copias_ahora)
     
-    # P8a   Copias = 0
+    # CodPrueba: 8a      --> Copias = 0
     def test_editar_copias_3(self):
         res = self.login('p@gmail.com', '1243')
         id_libro_a_editar = 3
@@ -344,6 +344,7 @@ class TestAdmin(BaseTestClass):
     
     
     ############################ BORRAR UN LIBRO ############################
+    # CodPrueba: 1      --> Borrar un libro
     def test_borrar_libro(self):
         res = self.login('p@gmail.com', '1243')
         n_lib_antes = len(self.db.select("SELECT * FROM Book"))
