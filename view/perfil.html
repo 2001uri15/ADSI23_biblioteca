@@ -114,6 +114,11 @@
 
         <!--CONTENIDO QUE SE QUIERA PONER DEL USUARIO-->
         <div class="columna-derecha">
+            {% if not amigosRecom: %}
+            <div class="alert alert-warning alert-danger fade show" role="alert">
+                <p class="mensaje-sin-amigos">No tienes ninguna recomendación de amigos</p>
+             </div>
+            {%endif%}
 
             {% if amigos: %}
             <!-- MI LISTA DE AMIGOS AMIGOS -->
@@ -198,7 +203,7 @@
             </nav>
             <div>
                 <!--TABLA DE LOS AMIGOS RECOMENDADOS-->
-                <table class="table">
+                <table class="table lista-amigos-de-amigos">
                     <thead>
                         <tr>
                             <th scope="col" style="width: 3%;">#</th>
@@ -213,7 +218,6 @@
                             <td><a class="recom_amigos" href="/perfil?id={{amigo.id}}">{{amigo.name}} {{amigo.apellidos}}</a></td>
                             <td><button type="button" class="btn btn-primary btn-sm recom_soli"><a href="/anadiramigo?amigoid={{amigo.id}}&id={{User.id}}&location=/perfil" style="color: white; text-decoration: none;">Aceptar Solicitud</a></button>
                             <button type="button" class="btn btn-primary btn-sm recom_soli"><a href="/eliminarpeticion?amigoid={{amigo.id}}&id={{User.id}}&location=/perfil" style="color: white; text-decoration: none;">Denegar Solicitud</a></button></td>
-                        </tr>
                         </tr>
                         {%endfor%}
                     </tbody>

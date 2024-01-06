@@ -327,7 +327,7 @@ def perfil():
 	if User != None:
 		return render_template('perfil.html', User=User, id=_id, soyYo=soyYo, UserLogin=UserLogin, amigosRecom=listas, solicitudYo=solicitudYo, solicitudEl=solicitudEl, amigos=amigos, esAmigo=esAmigo, peticiones=listaPeticiones) #Paso a la vista las dos litas
 	else:
-		return redirect("/")
+		return redirect("/login")
 	
 @app.route('/foro')
 def foro():
