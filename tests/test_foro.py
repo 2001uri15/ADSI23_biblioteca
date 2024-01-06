@@ -41,7 +41,7 @@ class TestForo(BaseTestClass):
     #################### ACCEDER A FUNCIONES DE FORO ESTANDO REGISTRADO ############################
 
     def test_acceso_foros_correcto(self):
-        res = self.login('andergorocica@gmail.com', '2134')
+        res = self.login('p@gmail.com', '1243')
         self.assertEqual(302, res.status_code)
         self.assertEqual('/', res.location)
 
@@ -55,7 +55,7 @@ class TestForo(BaseTestClass):
     ################### INSERTAR UN TEMA YA CREADO #################################################
 
     def test_crear_tema_existente(self):
-        res = self.login('andergorocica@gmail.com', '2134')
+        res = self.login('p@gmail.com', '1243')
         self.assertEqual(302, res.status_code)
         self.assertEqual('/', res.location)
 
@@ -82,7 +82,7 @@ class TestForo(BaseTestClass):
     ################### INSERTAR UN TEMA NO CREADO #################################################
 
     def test_crear_tema_nuevo(self):
-        res = self.login('andergorocica@gmail.com', '2134')
+        res = self.login('p@gmail.com', '1243')
         self.assertEqual(302, res.status_code)
         self.assertEqual('/', res.location)
 
