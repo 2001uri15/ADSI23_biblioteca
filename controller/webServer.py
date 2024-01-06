@@ -339,7 +339,7 @@ def foro():
 
 	return render_template('foro.html', temasF = temas)
 
-@app.route('/anadir_foro')
+@app.route('/anadir_foro',  methods=['GET', 'POST'])
 def anadir_foro():
 	if 'user' not in dir(request) or request.user is None:
 		return redirect("/")
