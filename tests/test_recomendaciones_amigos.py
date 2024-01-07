@@ -27,10 +27,6 @@ class TestRecomendacionesDeAmigo(BaseTestClass):
         self.assertEqual(302, res.status_code)
         self.assertEqual('/', res.location)
 
-        #Borrar los amigos y los libros leidos
-        self.db.select("DELETE FROM Amigo")
-        self.db.select("DELETE FROM Reserva")
-
         # Acceder al perfil del usuario y obtener la respuesta
         res_perfil = self.client.get('/perfil')
         self.assertEqual(200, res_perfil.status_code)
@@ -44,18 +40,9 @@ class TestRecomendacionesDeAmigo(BaseTestClass):
     # CodPrueba: 3  -> No tengo ningun amigo de mi amigo añadido
     def test_sin_amigos_de_amigos(self):
         # Iniciamos sesión
-        res = self.login('2001uri15@gmail.com', '1234')
+        res = self.login('james@gmail.com', '123456')
         self.assertEqual(302, res.status_code)
         self.assertEqual('/', res.location)
-
-        #Borrar los amigos y los libros leidos
-        self.db.select("DELETE FROM Amigo")
-        self.db.select("DELETE FROM Reserva")
-
-        #Metemos que tenemos un amigo y que ese amigo tiene dos amigos
-        self.db.select("INSERT INTO Amigo VALUES (5, 1)")
-        self.db.select("INSERT INTO Amigo VALUES (1, 4)")
-        self.db.select("INSERT INTO Amigo VALUES (1, 3)")
 
         # Acceder al perfil del usuario y obtener la respuesta
         res_perfil = self.client.get('/perfil')
@@ -70,4 +57,21 @@ class TestRecomendacionesDeAmigo(BaseTestClass):
         cantidad_filas_amigos_de_amigos = len(tabla_amigos_de_amigos.find_all('tr'))
 
         # Verificar que se espera una tabla vacía ya que el usuario no tiene amigos de amigos
-        self.assertEqual(1, cantidad_filas_amigos_de_amigos)  # 1 para la fila de encabezado
+        self.assertEqual(3, cantidad_filas_amigos_de_amigos)  # 1 para la fila de encabezado
+
+    # CodPrueba: 3  -> Todos los amigos de mis amigos son amigos
+    def test_amigos_de_amigos_anadidos(self):
+        # Iniciamos sesión
+        res = self.login('ejemplo@gmail.com', '123456')
+        self.assertEqual(302, res.status_code)
+        self.assertEqual('/', res.location)
+
+        # Acceder al perfil del usuario y obtener la respuesta
+        res_perfil = self.client.get('/perfil')
+        self.assertEqual(200, res_perfil.status_code)
+        page = BeautifulSoup(res_perfil.data, features="html.parser")
+
+        # Verificar que el mensaje de "Sin amigos" esté presente en la página
+        mensaje_sin_amigos = page.find('p', {'class': 'mensaje-sin-amigos'})
+        self.assertIsNotNone(mensaje_sin_amigos)
+        self.assertEqual('No tienes ninguna recomendación de amigos', mensaje_sin_amigos.get_text())
