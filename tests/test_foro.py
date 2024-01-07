@@ -81,7 +81,7 @@ class TestForo(BaseTestClass):
 
         num_temas_antes = len(self.db.select("SELECT * FROM Tema"))
         nuevo_tema = {
-            'nombre': 'Nuevo2' #Para que funcione este caso de prueba hay que cambiar el nombre del tema por un tema que no exista
+            'nombre': 'Nuevo4' #Para que funcione este caso de prueba hay que cambiar el nombre del tema por un tema que no exista
         }
 
         res_add_tema = self.client.post('/gest_anadir_foro', data=nuevo_tema, follow_redirects=True) 
@@ -101,7 +101,7 @@ class TestForo(BaseTestClass):
 
         num_temas_antes = len(self.db.select("SELECT * FROM Tema"))
         nuevo_tema = {
-            'nombre': 'ADSI' #Para que funcione este caso de prueba hay que cambiar el nombre del tema por un tema que no exista
+            'nombre': 'SGI' #Para que funcione este caso de prueba hay que cambiar el nombre del tema por un tema que no exista
         }
 
         res_add_tema = self.client.post('/gest_anadir_foro', data=nuevo_tema, follow_redirects=True) 
@@ -121,7 +121,7 @@ class TestForo(BaseTestClass):
 
         num_temas_antes = len(self.db.select("SELECT * FROM Tema"))
         nuevo_tema = {
-            'nombre': 'Nuevo2' #Para que funcione este caso de prueba hay que cambiar el nombre del tema por un tema que no exista
+            'nombre': 'Nuevo2' #Para que funcione este caso de prueba hay que cambiar el nombre del tema por un tema que ya exista
         }
 
         res_add_tema = self.client.post('/gest_anadir_foro', data=nuevo_tema, follow_redirects=True) 
@@ -141,7 +141,7 @@ class TestForo(BaseTestClass):
 
         num_temas_antes = len(self.db.select("SELECT * FROM Tema"))
         nuevo_tema = {
-            'nombre': 'Nuevo2' #Para que funcione este caso de prueba hay que cambiar el nombre del tema por un tema que no exista
+            'nombre': 'Nuevo2' 
         }
         
         res2 = self.client.get('/foro')
@@ -277,7 +277,6 @@ class TestForo(BaseTestClass):
         page = BeautifulSoup(res_perfil.data, features="html.parser")
         self.assertEqual('Asier Larrazabal', page.find('h5').get_text())
 
-
     ################## EL USUARIO PULSA SALIR ESTANDO EN EL FORO #######################################
 
     def test_salir_tema_foro(self):
@@ -289,5 +288,6 @@ class TestForo(BaseTestClass):
         self.assertEqual(res.status_code, 200)
 
         res2 = self.client.get('/')
-         self.assertEqual(res2.status_code, 200)
+        self.assertEqual(res2.status_code, 200)
+
 
