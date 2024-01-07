@@ -48,6 +48,20 @@
       "password": "4321",
       "id" : "andrealofi",
       "admin": true
+    },
+    {
+      "nombres": "Bidane Leon",
+      "email": "bibz@gmail.com",
+      "password": "3241",
+      "id" : "bikus",
+      "admin": true
+    },
+    {
+      "nombres": "Juanita Banana",
+      "email": "banan@gmail.com",
+      "password": "1312",
+      "id" : "banana",
+      "admin": false
     }
   ]
 }
