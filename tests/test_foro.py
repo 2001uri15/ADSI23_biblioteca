@@ -205,3 +205,89 @@ class TestForo(BaseTestClass):
         self.assertEqual(num_mensajes_antes + 1, num_mensajes_ahora)
 
     ################## EL USUARIO SALE DEL FORO ANTES DE PULSAR ENVIAR ###############################
+
+    def test_enviar_mensaje_salir(self):
+        login_res = self.login('p@gmail.com', '1243')
+        self.assertEqual(302, login_res.status_code)
+        self.assertEqual('/', login_res.location)
+
+        num_mensajes_antes = len(self.db.select("SELECT * FROM Publicacion WHERE idTema = 1"))
+
+        mensaje_data = {'mensaje': 'Este es otro mensaje de prueba'}
+        res = self.client.get('/foro')
+
+        num_mensajes_ahora = len(self.db.select("SELECT * FROM Publicacion WHERE idTema = 1"))
+
+        self.assertEqual(num_mensajes_antes, num_mensajes_ahora)
+        self.assertEqual(200, res.status_code)
+
+    ################## EL USUARIO PINCHA EL ID DEL CREADOR DEL FORO ####################################
+
+    def test_ver_perfil_creador(self):
+        login_res = self.login('p@gmail.com', '1243')
+        self.assertEqual(302, login_res.status_code)
+        self.assertEqual('/', login_res.location)
+
+        res = self.client.get('/tema/1')
+        self.assertEqual(res.status_code, 200)
+
+        id_creador_lista = self.db.select("SELECT creado FROM TEMA WHERE id='1'")
+
+        self.assertIsInstance(id_creador_lista, list)
+        self.assertTrue(id_creador_lista)
+        self.assertIsInstance(id_creador_lista[0], tuple)
+
+        id_creador_valor = id_creador_lista[0][0]
+
+        res_perfil = self.client.get(f'/perfil?id={id_creador_valor}')
+        self.assertEqual(res_perfil.status_code, 200)
+
+        page = BeautifulSoup(res_perfil.data, features="html.parser")
+        self.assertEqual('Patricia Ortega', page.find('h5').get_text())
+
+    ################## EL USUARIO PINCHA UN ID DE UN USUARIO QUE ENVIÓ UN MENSAJE ######################
+
+    def test_ver_perfil_usuario(self):
+        login_res = self.login('p@gmail.com', '1243')
+        self.assertEqual(302, login_res.status_code)
+        self.assertEqual('/', login_res.location)
+
+        res = self.client.get('/tema/1')
+        self.assertEqual(res.status_code, 200)
+
+        id_creador_lista = self.db.select("SELECT creado FROM TEMA WHERE id='1'")
+
+        self.assertIsInstance(id_creador_lista, list)
+        self.assertTrue(id_creador_lista)
+        self.assertIsInstance(id_creador_lista[0], tuple)
+
+        id_creador_valor = id_creador_lista[0][0]
+
+        id_usuario_no_creador = self.db.select(f"SELECT idUsuario FROM PUBLICACION WHERE idTema='1' AND idUsuario != {id_creador_valor}")
+
+        self.assertIsInstance(id_usuario_no_creador, list)
+        self.assertTrue(id_usuario_no_creador)
+        self.assertIsInstance(id_usuario_no_creador[0], tuple)
+
+        id_no_creador_valor = id_usuario_no_creador[0][0]
+
+        res_perfil = self.client.get(f'/perfil?id={id_no_creador_valor}')
+        self.assertEqual(res_perfil.status_code, 200)
+
+        page = BeautifulSoup(res_perfil.data, features="html.parser")
+        self.assertEqual('Asier Larrazabal', page.find('h5').get_text())
+
+
+    ################## EL USUARIO PULSA SALIR ESTANDO EN EL FORO #######################################
+
+    def test_salir_tema_foro(self):
+        login_res = self.login('p@gmail.com', '1243')
+        self.assertEqual(302, login_res.status_code)
+        self.assertEqual('/', login_res.location)
+
+        res = self.client.get('/tema/1')
+        self.assertEqual(res.status_code, 200)
+
+        res2 = self.client.get('/')
+         self.assertEqual(res2.status_code, 200)
+
