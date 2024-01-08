@@ -300,6 +300,7 @@ def perfil():
 	solicitudYo=False
 	solicitudUsuario=False
 	solicitudEl=False
+	libros_recomendados = None
 	if _id != -1:
 		#PERFIL AJENO
 		User = library.get_user_id(_id)
