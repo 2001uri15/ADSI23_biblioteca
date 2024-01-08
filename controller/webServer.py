@@ -318,7 +318,8 @@ def perfil():
 			soyYo=True
 			User = request.user
 			# Mi lista de amigos
-			amigos = library.misAmigos(User,User)
+			amigos=library.misAmigos(User,User)
+			#print(amigos)
 			# Buscar las dos listas: Amigos de amigo y recomendaciones de usuarios por libros
 			listaAmigos = library.recomendaciones_amigos(User)
 			listaLibros = library.recomendaciones_amigos_libros(User)
@@ -344,6 +345,8 @@ def anadir_foro():
 	if 'user' not in dir(request) or request.user is None:
 		return redirect("/")
 	return render_template('anadir_foro.html')
+
+# +++ Red amigos - Andreea Vasilica
 
 @app.route('/anadiramigo')
 def anadiramigo():
@@ -404,6 +407,8 @@ def eliminarpeticion():
 	library.eliminarPeticion(mi_id, amigo_id)
 
 	return redirect(path)
+
+# --- Red amigos - Andreea Vasilica
 
 @app.route('/gest_anadir_foro', methods=['GET', 'POST'])
 def gest_anadir_foro():
