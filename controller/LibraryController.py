@@ -126,8 +126,26 @@ class LibraryController:
 			return amigoRecom
 		
 	def somosAmigos(self, user, amigo):
+		"""somosAmigos = db.select("SELECT 1 FROM Amigo WHERE (idUsuario = ? AND idAmigo = ?) or (idAmigo = ? AND idUsuario = ?) LIMIT 1", (user.id, amigo.id, user.id, amigo.id,))
+		return bool(somosAmigos)"""
+	
+		    # Verificar si user y amigo son None
+		if user is None or amigo is None:
+			return False
+
+    # Verificar si user y amigo tienen el atributo 'id'
+		if not hasattr(user, 'id') or not hasattr(amigo, 'id'):
+			return False
+
+    # Ejecutar la consulta SQL para comprobar si son amigos
 		somosAmigos = db.select("SELECT 1 FROM Amigo WHERE (idUsuario = ? AND idAmigo = ?) or (idAmigo = ? AND idUsuario = ?) LIMIT 1", (user.id, amigo.id, user.id, amigo.id,))
-		return bool(somosAmigos)
+
+    # Verificar si la consulta devuelve algún resultado
+		if somosAmigos:
+			return True
+		else:
+			return False
+
 	
 	def misAmigos(self, usuario, usuarioLogin):
 		user = db.select("SELECT * from Amigo WHERE idUsuario = ?", (usuario.id,))
@@ -377,43 +395,41 @@ class LibraryController:
 	### RECOMENDACIONES SISTEMA: 
 
 	def recomendacion_libros_sistema(self, user_id):
-    	# Obtener los libros reservados por el usuario
-		libros_reservados_usuario = db.select("SELECT idLibro FROM Reserva WHERE idUsuario = ?", (user_id,))
+    # Obtener los libros reservados por el usuario y sus autores:
+		libros_reservados = db.select(
+        "SELECT b.id, b.title, b.author, MAX(rs.puntuacion) as max_puntuacion "
+        "FROM Reserva r "
+        "JOIN Book b ON r.idLibro = b.id "
+        "LEFT JOIN Resena rs ON r.idLibro = rs.idLibro AND r.idUsuario = rs.idUsuario "
+        "WHERE r.idUsuario = ? "
+        "GROUP BY b.id, b.title, b.author", (user_id,)
+    	)
 
-    	# Obtener los amigos del usuario
-		amigos = db.select("SELECT idAmigo FROM Amigo WHERE idUsuario = ?", (user_id,))
-		amigos_tupla = tuple(amigo[0] for amigo in amigos)
-
-
-    	# Obtener los libros reservados por los amigos
-		placeholders = ', '.join(['?' for _ in amigos])
-		libros_reservados_amigos = db.select(f"SELECT idLibro FROM Reserva WHERE idUsuario IN ({placeholders})", amigos_tupla)
-    	# Combinar las reservas del usuario y las de sus amigos
-		libros_reservados_totales = set(libros_reservados_usuario) | set(libros_reservados_amigos)
-
-		if not libros_reservados_totales:
+		if not libros_reservados:
 			return []
 
-    	# Obtener el autor de los libros reservados por el usuario y sus amigos
-		#autores_libros_reservados = db.select("SELECT a.name FROM Book b, Author a WHERE b.author = a.id AND b.id IN (?)", (libros_reservados_totales,))
-		placeholders = ', '.join(['?' for _ in libros_reservados_totales])
-		consulta_sql = f"SELECT a.name FROM Book b, Author a WHERE b.author = a.id AND b.id IN ({placeholders})"
-		autores_libros_reservados = db.select(consulta_sql, libros_reservados_totales)
+    # Ordenar los libros reservados ordenados por la puntuación más alta (para que muestre eesos primero)
+		libros_reservados.sort(key=lambda libro: libro[3] if libro[3] is not None else float('-inf'), reverse=True)
 
-		if not autores_libros_reservados:
-			return []
+    # Obtener los autores de los libros reservados por el usuario:
+		autores_libros_reservados = [libro[2] for libro in libros_reservados]
 
-    	# Obtener libros con el mismo autor que no ha reservado el usuario
-		libros_no_leidos_con_mismo_autor = []
+    # Obtener libros del mismo autor que el usuario no ha reservado:
+		libros_no_reservados_mismo_autor = []
 		for autor in autores_libros_reservados:
-			libros_similares = db.select("SELECT b.* FROM Book b, Author a WHERE b.author = a.id AND a.name = ? AND b.id NOT IN (SELECT idLibro FROM Reserva WHERE idUsuario = ?)", (autor[0], user_id,))
-			libros_no_leidos_con_mismo_autor.extend(libros_similares)
+			libros_similares = db.select(
+            "SELECT b.*, MAX(rs.puntuacion) as max_puntuacion "
+            "FROM Book b "
+            "LEFT JOIN Reserva r ON b.id = r.idLibro AND r.idUsuario = ? "
+            "LEFT JOIN Resena rs ON b.id = rs.idLibro "
+            "WHERE b.author = ? AND r.idLibro IS NULL "
+            "GROUP BY b.id", (user_id, autor,)
+        	)
+			libros_no_reservados_mismo_autor.extend(libros_similares)
 
-    	# Obtener libros reservados por los amigos que no ha reservado el usuario
-		libros_reservados_amigos_no_leidos = db.select("SELECT b.* FROM Book b WHERE b.id IN (?) AND b.id NOT IN (SELECT idLibro FROM Reserva WHERE idUsuario = ?)", (libros_reservados_amigos, user_id))
+    # Ordenar los libros por la puntuación más alta:
+		libros_no_reservados_mismo_autor.sort(key=lambda libro: libro[6] if libro[6] is not None else float('-inf'), reverse=True)
 
-    	# Combinar ambas recomendaciones
-		libros_no_leidos = libros_no_leidos_con_mismo_autor + libros_reservados_amigos_no_leidos
 
-		libros_objetos = [Book(libro[0], libro[1], libro[2], libro[3], libro[4], libro[5]) for libro in libros_no_leidos]
+		libros_objetos = [Book(libro[0], libro[1], libro[2], libro[3], libro[4], libro[5]) for libro in libros_no_reservados_mismo_autor]
 		return libros_objetos

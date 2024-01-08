@@ -120,6 +120,12 @@
              </div>
             {%endif%}
 
+            {% if not libros_recomendados: %}
+            <div class="alert alert-warning alert-danger fade show" role="alert">
+                <p class="mensaje-sin-recomendaciones">No tienes ninguna recomendación de libros</p>
+             </div>
+            {%endif%}
+
             {% if amigos: %}
             <!-- MI LISTA DE AMIGOS AMIGOS -->
             <nav class="navbar bg-body-tertiary">
@@ -225,7 +231,7 @@
             </div>
             {%endif%}
             
-            {% if librosRecomendados %}
+            {% if libros_recomendados %}
             <!-- RECOMENDACIONES DEL SISTEMA -->
             <nav class="navbar bg-body-tertiary">
                 <div class="container-fluid">
@@ -244,16 +250,24 @@
                     </thead>
                     <tbody>
                         {% for libro in librosRecomendados %}
+                            {% if libro[6] is not none %}
                             <tr>
                                 <th scope="row"></th>
-                                <td>{{ libro.title }}</td>
-                                <td>{{ libro.author }}</td>
+                                <td><a class="recom_libros" href="/perfil?id={{user.id}}">{{book.title}} {{book.author}}</a></td>
+                                <td>{{ libro[6]  }}</td>
+                                <td>{{ libro[6]  }}</td>
+                                <td><button type="button" class="btn btn-primary btn-sm recom_soli"><a href="/reservarLibro?libroid={bookid=book_id}&location=/perfil" style="color: white; text-decoration: none;">Reservar</a></button>
                             </tr>
+                            {% endif %}
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
-        {% endif %}
+            {% else %}
+                <!-- Mensaje si no hay recomendaciones del sistema -->
+                <p>No hay libros recomendados por el sistema.</p>
+            {% endif %}
+
         
             <p>Contenido de la columna derecha.</p>
         </div>

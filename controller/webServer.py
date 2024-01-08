@@ -300,7 +300,7 @@ def perfil():
 	solicitudYo=False
 	solicitudUsuario=False
 	solicitudEl=False
-	librosre_comendados = None
+	libros_recomendados = None
 	
 	if _id != -1:
 		#PERFIL AJENO
