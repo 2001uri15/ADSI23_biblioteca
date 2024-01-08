@@ -109,7 +109,7 @@
                 <a href="/historial_reservas?user_id={{User.id}}&location=/perfil" class="btn btn-primary" style="color: white; text-decoration: none;">Historial de reservas</a>
             </div>
             
-            <p>Contenido de la columna izquierda.</p>
+            <!--<p>Contenido de la columna izquierda.</p>-->
         </div>
 
         <!--CONTENIDO QUE SE QUIERA PONER DEL USUARIO-->
@@ -224,8 +224,62 @@
                 </table>
             </div>
             {%endif%}
+            
+            {% if libros_recomendados %}
+            <!-- RECOMENDACIONES DEL SISTEMA -->
+            <nav class="navbar bg-body-tertiary">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#recomendacionesSistema">Recomendaciones del Sistema</a>
+                </div>
+            </nav>
+            <div>
+                <!--TABLA DE LIBROS RECOMENDADOS POR EL SISTEMA-->
+                <!--
+                <table class="table tabla-recomendaciones-sistema">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="width: 3%;"></th>
+                            <th scope="col" style="width: 77%;">Título</th>
+                            <th scope="col" style="width: 20%;">Autor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for libro in librosRecomendados %}
+                            {% if libro[6] is not none %}
+                            <tr>
+                                <th scope="row"></th>
+                                <td><a class="recom_libros" href="/perfil?id={{user.id}}">{{book.title}} {{book.author}}</a></td>
+                                <td>{{ libro[6]  }}</td>
+                                <td>{{ libro[6]  }}</td>
+                                <td><button type="button" class="btn btn-primary btn-sm recom_soli"><a href="/reservarLibro?libroid={bookid=book_id}&location=/perfil" style="color: white; text-decoration: none;">Reservar</a></button>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+                -->
 
-            <p>Contenido de la columna derecha.</p>
+                <h5>Libros recomendados:</h5>
+                {% if libros_recomendados == None: %}
+                    <h6>No hay recomendaciones</h6>
+                {% else: %}
+                    {% for elem in libros_recomendados%}
+                    <div class="card-body">
+                        <a href="{{ url_for('ver_libro', book_id=elem.id) }}"><h5 class="card-title">{{elem.title}}</h5></a>
+                        
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+            </div>
+            {% else %}
+                <!-- Mensaje si no hay recomendaciones del sistema -->
+                <p>No hay libros recomendados por el sistema.</p>
+            {% endif %}
+
+        
+            <!--<p>Contenido de la columna derecha.</p>-->
+
         </div>
         
     </div>

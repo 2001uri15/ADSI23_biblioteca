@@ -324,8 +324,9 @@ def perfil():
 			listaLibros = library.recomendaciones_amigos_libros(User)
 			listas = set(listaAmigos + listaLibros)
 			listaPeticiones = library.obtenerListaPeticiones(User)
+			libros_recomendados = library.recomendacion_libros_sistema(User.id)
 	if User != None:
-		return render_template('perfil.html', User=User, id=_id, soyYo=soyYo, UserLogin=UserLogin, amigosRecom=listas, solicitudYo=solicitudYo, solicitudEl=solicitudEl, amigos=amigos, esAmigo=esAmigo, peticiones=listaPeticiones) #Paso a la vista las dos litas
+		return render_template('perfil.html', User=User, id=_id, soyYo=soyYo, UserLogin=UserLogin, amigosRecom=listas, solicitudYo=solicitudYo, solicitudEl=solicitudEl, amigos=amigos, esAmigo=esAmigo, peticiones=listaPeticiones, libros_recomendados=libros_recomendados) #Paso a la vista las dos litas
 	else:
 		return redirect("/login")
 	
