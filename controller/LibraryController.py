@@ -104,6 +104,8 @@ class LibraryController:
 			return None
 
 	### AMIGOS:
+	
+	# Recomendaciones de amigos -- Asier Larrazabal
 
 	def recomendaciones_amigos(self, user):
 		userq = db.select("SELECT * from Amigo WHERE idUsuario = ?", (user.id,))
@@ -128,6 +130,28 @@ class LibraryController:
 	def somosAmigos(self, user, amigo):
 		somosAmigos = db.select("SELECT 1 FROM Amigo WHERE (idUsuario = ? AND idAmigo = ?) or (idAmigo = ? AND idUsuario = ?) LIMIT 1", (user.id, amigo.id, user.id, amigo.id,))
 		return bool(somosAmigos)
+		
+	def recomendaciones_amigos_libros(self, user):
+		# Obtengo los libros que he leido
+		libro = db.select("SELECT idLibro from Reserva WHERE idUsuario = ?", (user.id,))
+		amigoRecom = []
+		if len(libro) > 0:
+			for amigo in libro:
+				# Que usuarios han leido los libros que he leido yo
+				librosComun = db.select("SELECT idUsuario FROM Reserva WHERE idLibro = ? AND idUsuario NOT IN (SELECT idAmigo FROM Amigo WHERE idUsuario = ?)", (amigo[0], user.id, ))
+				for usuario in librosComun:
+					# Obtengo su información
+					usu = db.select("SELECT * FROM User WHERE id = ?", (usuario[0],))
+					amigo_obj = User(usu[0][0], usu[0][1], usu[0][2], usu[0][3], usu[0][4], usu[0][6])
+
+					# No añado a la lista mi usuario
+					if (user.id is not amigo_obj.id):
+						amigoRecom.append(amigo_obj)
+			return amigoRecom
+		else:
+			return amigoRecom
+	
+	# +++ Red amigos - Andreea Vasilica
 	
 	def misAmigos(self, usuario, usuarioLogin):
 		user = db.select("SELECT * from Amigo WHERE idUsuario = ?", (usuario.id,))
@@ -174,26 +198,8 @@ class LibraryController:
 
 		amistades=zip(misAmigos,estadosAmigos)		
 		return amistades
-
-	def recomendaciones_amigos_libros(self, user):
-		# Obtengo los libros que he leido
-		libro = db.select("SELECT idLibro from Reserva WHERE idUsuario = ?", (user.id,))
-		amigoRecom = []
-		if len(libro) > 0:
-			for amigo in libro:
-				# Que usuarios han leido los libros que he leido yo
-				librosComun = db.select("SELECT idUsuario FROM Reserva WHERE idLibro = ? AND idUsuario NOT IN (SELECT idAmigo FROM Amigo WHERE idUsuario = ?)", (amigo[0], user.id, ))
-				for usuario in librosComun:
-					# Obtengo su información
-					usu = db.select("SELECT * FROM User WHERE id = ?", (usuario[0],))
-					amigo_obj = User(usu[0][0], usu[0][1], usu[0][2], usu[0][3], usu[0][4], usu[0][6])
-
-					# No añado a la lista mi usuario
-					if (user.id is not amigo_obj.id):
-						amigoRecom.append(amigo_obj)
-			return amigoRecom
-		else:
-			return amigoRecom
+	
+	# --- Red amigos - Andreea Vasilica
 
 	def obtenerListaPeticiones(self, user):
 		userq = db.select("SELECT idUsuario from PeticionAmigo WHERE idAmigo = ?", (user.id,))
@@ -210,6 +216,7 @@ class LibraryController:
 		else:
 			return misPeti
 	
+	# +++ Red amigos - Andreea Vasilica
 	def anadirPeticionAmistad(self, idUsuario, idAmigo):
 		db.select("INSERT INTO PeticionAmigo VALUES (?, ?)", (idUsuario, idAmigo,))
 
@@ -237,6 +244,8 @@ class LibraryController:
 		if len(serq) > 0:
 			mandada=True
 		return mandada
+	
+	# --- Red amigos - Andreea Vasilica
 
 	
 	### FUNCIONES ADMIN:
@@ -372,3 +381,51 @@ class LibraryController:
 			reservas_creadas.append(mostrar)
 
 		return reservas_creadas
+
+
+		### RECOMENDACIONES SISTEMA: 
+
+	def recomendacion_libros_sistema(self, user_id):
+    	# Obtener los libros reservados por el usuario y sus autores:
+		libros_reservados = db.select(
+        "SELECT b.id, b.title, b.author, MAX(rs.puntuacion) as max_puntuacion "
+        "FROM Reserva r "
+        "JOIN Book b ON r.idLibro = b.id "
+        "LEFT JOIN Resena rs ON r.idLibro = rs.idLibro AND r.idUsuario = rs.idUsuario "
+        "WHERE r.idUsuario = ? "
+        "GROUP BY b.id, b.title, b.author", (user_id,)
+    	)
+		print("Los libros que tengo reservados son: ", libros_reservados)
+
+		if not libros_reservados:
+			return []
+		
+    	# Ordenar los libros reservados ordenados por la puntuación más alta (para que muestre eesos primero)
+		#libros_reservados.sort(key=lambda libro: libro[3] if libro[3] is not None else float('-inf'), reverse=True)
+
+    	# Obtener los autores de los libros reservados por el usuario:
+		autores_libros_reservados = [libro[2] for libro in libros_reservados]
+		autores_libros_reservados = list(set(autores_libros_reservados))
+		print("Y los autores de estos libros son: ", autores_libros_reservados)
+
+    	# Obtener libros del mismo autor que el usuario no ha reservado:
+		libros_no_reservados_mismo_autor = []
+		for autor in autores_libros_reservados:
+			libros_similares = db.select(
+            "SELECT b.*, MAX(rs.puntuacion) as max_puntuacion "
+            "FROM Book b "
+            "LEFT JOIN Reserva r ON b.id = r.idLibro AND r.idUsuario = ? "
+            "LEFT JOIN Resena rs ON b.id = rs.idLibro "
+            "WHERE b.author = ? AND r.idLibro IS NULL "
+            "GROUP BY b.id", (user_id, autor,)
+        	)
+			libros_no_reservados_mismo_autor.extend(libros_similares)
+
+		print("Estos son algunos libros de los mismos autores", libros_no_reservados_mismo_autor)
+
+    	# Ordenar los libros por la puntuación más alta:
+		libros_no_reservados_mismo_autor.sort(key=lambda libro: libro[6] if libro[6] is not None else float('-inf'), reverse=True)
+
+
+		libros_objetos = [Book(libro[0], libro[1], libro[2], libro[3], libro[4], libro[5]) for libro in libros_no_reservados_mismo_autor]
+		return libros_objetos

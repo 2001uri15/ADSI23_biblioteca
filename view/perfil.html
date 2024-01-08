@@ -82,6 +82,8 @@
                     <p style="color:blue; font-family: Arial, Helvetica, sans-serif; font-weight:bold;">Usuario</p>
                     {% endif %}
 
+                    <!-- +++ Red amigos - Andreea Vasilica -->
+
                         {% if not soyYo: %}
                             {%if not esAmigo:%}
                                 {%if solicitudYo%}
@@ -96,6 +98,7 @@
                             {%endif%}
                             <br><br>
                         {%endif%}
+                    <!-- --- Red amigos - Andreea Vasilica -->
                 </div>
             </div>
             <!--INFORMACIÓN DEL USUARIO-->
@@ -109,7 +112,7 @@
                 <a href="/historial_reservas?user_id={{User.id}}&location=/perfil" class="btn btn-primary" style="color: white; text-decoration: none;">Historial de reservas</a>
             </div>
             
-            <p>Contenido de la columna izquierda.</p>
+            <!--<p>Contenido de la columna izquierda.</p>-->
         </div>
 
         <!--CONTENIDO QUE SE QUIERA PONER DEL USUARIO-->
@@ -120,6 +123,14 @@
              </div>
             {%endif%}
 
+            {% if not amigos: %}
+            <div class="alert alert-warning alert-danger fade show" role="alert">
+                <p class="mensaje-sin-amigos">No tienes amigos</p>
+             </div>
+            {%endif%}
+
+            <!-- +++ Red amigos - Andreea Vasilica -->
+
             {% if amigos: %}
             <!-- MI LISTA DE AMIGOS AMIGOS -->
             <nav class="navbar bg-body-tertiary">
@@ -127,6 +138,7 @@
                     <a class="navbar-brand" href="#amigos">Mis amigos</a>
                 </div>
             </nav>
+
             <div>
                 <!--TABLA DE MIS AMIGOS-->
                 <table class="table">
@@ -164,6 +176,8 @@
             </div>               
             {%endif%}
 
+            <!-- --- Red amigos - Andreea Vasilica -->
+
             {% if amigosRecom: %}
             <!-- RECOMENDACIONES DE AMIGOS -->
             <nav class="navbar bg-body-tertiary">
@@ -194,15 +208,17 @@
             </div>
             {%endif%}
 
+            <!-- +++ Red amigos - Andreea Vasilica -->
+
             {% if peticiones: %}
-            <!-- RECOMENDACIONES DE AMIGOS -->
+            <!-- SOLICITUDES DE USUARIOS -->
             <nav class="navbar bg-body-tertiary">
                 <div class="container-fluid">
                     <a class="navbar-brand" href="#recomAmigos">Peticiones de Amistad</a>
                 </div>
             </nav>
             <div>
-                <!--TABLA DE LOS AMIGOS RECOMENDADOS-->
+                <!--TABLA DE SOLICITUDES DE USUARIOS-->
                 <table class="table lista-amigos-de-amigos">
                     <thead>
                         <tr>
@@ -225,7 +241,69 @@
             </div>
             {%endif%}
 
-            <p>Contenido de la columna derecha.</p>
+            <!-- --- Red amigos - Andreea Vasilica -->
+            
+            {% if libros_recomendados %}
+            <!-- RECOMENDACIONES DEL SISTEMA -->
+            <nav class="navbar bg-body-tertiary">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#recomendacionesSistema">Recomendaciones del Sistema</a>
+                </div>
+            </nav>
+            <div>
+                <!--TABLA DE LIBROS RECOMENDADOS POR EL SISTEMA-->
+                <!--
+                <table class="table tabla-recomendaciones-sistema">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="width: 3%;"></th>
+                            <th scope="col" style="width: 77%;">Título</th>
+                            <th scope="col" style="width: 20%;">Autor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for libro in librosRecomendados %}
+                            {% if libro[6] is not none %}
+                            <tr>
+                                <th scope="row"></th>
+                                <td><a class="recom_libros" href="/perfil?id={{user.id}}">{{book.title}} {{book.author}}</a></td>
+                                <td>{{ libro[6]  }}</td>
+                                <td>{{ libro[6]  }}</td>
+                                <td><button type="button" class="btn btn-primary btn-sm recom_soli"><a href="/reservarLibro?libroid={bookid=book_id}&location=/perfil" style="color: white; text-decoration: none;">Reservar</a></button>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+                -->
+
+                <h5>Libros recomendados:</h5>
+                {% if libros_recomendados == None: %}
+                    <h6>No hay recomendaciones</h6>
+                {% else: %}
+                    {% for elem in libros_recomendados%}
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center"></div>
+                            <a href="{{ url_for('ver_libro', book_id=elem.id) }}">
+                                <h5 class="card-title">{{elem.title}}</h5>
+                            </a>
+                            <form method="post" action="/add_booking?book_id={{ elem.id }}&user_id={{ UserLogin.id }}" style="display:inline;">
+                                <button type="submit" class="btn btn-danger d-flex align-items-center">Reservar</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+            </div>
+            {% else %}
+                <!-- Mensaje si no hay recomendaciones del sistema -->
+                <p>No hay libros recomendados por el sistema.</p>
+            {% endif %}
+
+        
+            <!--<p>Contenido de la columna derecha.</p>-->
+
         </div>
         
     </div>

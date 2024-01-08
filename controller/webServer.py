@@ -300,6 +300,7 @@ def perfil():
 	solicitudYo=False
 	solicitudUsuario=False
 	solicitudEl=False
+	libros_recomendados = None
 	if _id != -1:
 		#PERFIL AJENO
 		User = library.get_user_id(_id)
@@ -318,14 +319,16 @@ def perfil():
 			soyYo=True
 			User = request.user
 			# Mi lista de amigos
-			amigos = library.misAmigos(User,User)
+			amigos=library.misAmigos(User,User)
+			#print(amigos)
 			# Buscar las dos listas: Amigos de amigo y recomendaciones de usuarios por libros
 			listaAmigos = library.recomendaciones_amigos(User)
 			listaLibros = library.recomendaciones_amigos_libros(User)
 			listas = set(listaAmigos + listaLibros)
 			listaPeticiones = library.obtenerListaPeticiones(User)
+			libros_recomendados = library.recomendacion_libros_sistema(User.id)
 	if User != None:
-		return render_template('perfil.html', User=User, id=_id, soyYo=soyYo, UserLogin=UserLogin, amigosRecom=listas, solicitudYo=solicitudYo, solicitudEl=solicitudEl, amigos=amigos, esAmigo=esAmigo, peticiones=listaPeticiones) #Paso a la vista las dos litas
+		return render_template('perfil.html', User=User, id=_id, soyYo=soyYo, UserLogin=UserLogin, amigosRecom=listas, solicitudYo=solicitudYo, solicitudEl=solicitudEl, amigos=amigos, esAmigo=esAmigo, peticiones=listaPeticiones, libros_recomendados=libros_recomendados) #Paso a la vista las dos litas
 	else:
 		return redirect("/login")
 	
@@ -344,6 +347,8 @@ def anadir_foro():
 	if 'user' not in dir(request) or request.user is None:
 		return redirect("/")
 	return render_template('anadir_foro.html')
+
+# +++ Red amigos - Andreea Vasilica
 
 @app.route('/anadiramigo')
 def anadiramigo():
@@ -404,6 +409,8 @@ def eliminarpeticion():
 	library.eliminarPeticion(mi_id, amigo_id)
 
 	return redirect(path)
+
+# --- Red amigos - Andreea Vasilica
 
 @app.route('/gest_anadir_foro', methods=['GET', 'POST'])
 def gest_anadir_foro():
