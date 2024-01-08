@@ -22,11 +22,11 @@
 
     <h3>Reseñas:</h3>
     {% if resenas %}
-        <ul class="resenas">
+        <ul>
             {% for resena in resenas %}
                 {% set index = loop.index0 %}
                 <li>
-                    <p class="usu">Usuario: {{ autores_resenas[index] }}</p>
+                    <p>Usuario: {{ autores_resenas[index] }}</p>
                     <p>Puntuación: {{ resena.puntuacion }}</p>
                     <p>Comentario: {{ resena.comentario }}</p>
                 </li>

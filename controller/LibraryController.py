@@ -129,6 +129,8 @@ class LibraryController:
 		somosAmigos = db.select("SELECT 1 FROM Amigo WHERE (idUsuario = ? AND idAmigo = ?) or (idAmigo = ? AND idUsuario = ?) LIMIT 1", (user.id, amigo.id, user.id, amigo.id,))
 		return bool(somosAmigos)
 	
+	# +++ Red amigos - Andreea Vasilica
+	
 	def misAmigos(self, usuario, usuarioLogin):
 		user = db.select("SELECT * from Amigo WHERE idUsuario = ?", (usuario.id,))
 		misAmigos = []
@@ -174,6 +176,8 @@ class LibraryController:
 
 		amistades=zip(misAmigos,estadosAmigos)		
 		return amistades
+	
+	# --- Red amigos - Andreea Vasilica
 
 	def recomendaciones_amigos_libros(self, user):
 		# Obtengo los libros que he leido
@@ -210,6 +214,7 @@ class LibraryController:
 		else:
 			return misPeti
 	
+	# +++ Red amigos - Andreea Vasilica
 	def anadirPeticionAmistad(self, idUsuario, idAmigo):
 		db.select("INSERT INTO PeticionAmigo VALUES (?, ?)", (idUsuario, idAmigo,))
 
@@ -237,6 +242,8 @@ class LibraryController:
 		if len(serq) > 0:
 			mandada=True
 		return mandada
+	
+	# --- Red amigos - Andreea Vasilica
 
 	
 	### FUNCIONES ADMIN:

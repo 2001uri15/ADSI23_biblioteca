@@ -82,6 +82,8 @@
                     <p style="color:blue; font-family: Arial, Helvetica, sans-serif; font-weight:bold;">Usuario</p>
                     {% endif %}
 
+                    <!-- +++ Red amigos - Andreea Vasilica -->
+
                         {% if not soyYo: %}
                             {%if not esAmigo:%}
                                 {%if solicitudYo%}
@@ -96,6 +98,7 @@
                             {%endif%}
                             <br><br>
                         {%endif%}
+                    <!-- --- Red amigos - Andreea Vasilica -->
                 </div>
             </div>
             <!--INFORMACIÓN DEL USUARIO-->
@@ -120,6 +123,14 @@
              </div>
             {%endif%}
 
+            {% if not amigos: %}
+            <div class="alert alert-warning alert-danger fade show" role="alert">
+                <p class="mensaje-sin-amigos">No tienes amigos</p>
+             </div>
+            {%endif%}
+
+            <!-- +++ Red amigos - Andreea Vasilica -->
+
             {% if amigos: %}
             <!-- MI LISTA DE AMIGOS AMIGOS -->
             <nav class="navbar bg-body-tertiary">
@@ -127,6 +138,7 @@
                     <a class="navbar-brand" href="#amigos">Mis amigos</a>
                 </div>
             </nav>
+
             <div>
                 <!--TABLA DE MIS AMIGOS-->
                 <table class="table">
@@ -164,6 +176,8 @@
             </div>               
             {%endif%}
 
+            <!-- --- Red amigos - Andreea Vasilica -->
+
             {% if amigosRecom: %}
             <!-- RECOMENDACIONES DE AMIGOS -->
             <nav class="navbar bg-body-tertiary">
@@ -194,15 +208,17 @@
             </div>
             {%endif%}
 
+            <!-- +++ Red amigos - Andreea Vasilica -->
+
             {% if peticiones: %}
-            <!-- RECOMENDACIONES DE AMIGOS -->
+            <!-- SOLICITUDES DE USUARIOS -->
             <nav class="navbar bg-body-tertiary">
                 <div class="container-fluid">
                     <a class="navbar-brand" href="#recomAmigos">Peticiones de Amistad</a>
                 </div>
             </nav>
             <div>
-                <!--TABLA DE LOS AMIGOS RECOMENDADOS-->
+                <!--TABLA DE SOLICITUDES DE USUARIOS-->
                 <table class="table lista-amigos-de-amigos">
                     <thead>
                         <tr>
@@ -224,6 +240,8 @@
                 </table>
             </div>
             {%endif%}
+
+            <!-- --- Red amigos - Andreea Vasilica -->
             
             {% if libros_recomendados %}
             <!-- RECOMENDACIONES DEL SISTEMA -->
