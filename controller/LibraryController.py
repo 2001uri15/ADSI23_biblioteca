@@ -352,14 +352,15 @@ class LibraryController:
 
 	def anadir_reserva(self, idUsuario, idLibro):
 		fechaReserva = datetime.now()
+		
+		# El tiempo limite para devolver el libro son 60 dias
 		fechaDevolucion = fechaReserva + timedelta(days=60)
 
-		print(fechaReserva, fechaDevolucion)
-
-		reserva_anadir = db.insert(
-			"INSERT INTO Reserva (idUsuario, idLibro, fechaReserva, fechaDevolucion) VALUES (?, ?, ?, ?)",
-			(idUsuario, idLibro, fechaReserva, fechaDevolucion)
-		)
+		libro = self.get_book_info(idLibro)
+		print(libro.numCopias)
+		if (libro.numCopias >= 1):
+			db.insert("INSERT INTO Reserva (idUsuario, idLibro, fechaReserva, fechaDevolucion) VALUES (?, ?, ?, ?)", (idUsuario, idLibro, fechaReserva, fechaDevolucion))
+			db.update("UPDATE Book SET numCopias = ? WHERE id = ?", (libro.numCopias - 1, idLibro,))
 
 	def mostrar_reservas(self, idUsuario):
 		reservas_mostrar = db.select("SELECT * FROM Reserva WHERE idUsuario = ?", (idUsuario,))
