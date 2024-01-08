@@ -26,7 +26,7 @@
             {% for resena in resenas %}
                 {% set index = loop.index0 %}
                 <li>
-                    <p class="usu">Usuario: {{ autores_resenas[index] }}</p>
+                    <p class="usu">Usuario: <a href="/perfil?id={{ resena.idUsuario }}">{{ autores_resenas[index] }}</a></p>
                     <p>Puntuación: {{ resena.puntuacion }}</p>
                     <p>Comentario: {{ resena.comentario }}</p>
                 </li>
