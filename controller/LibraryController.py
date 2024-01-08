@@ -372,3 +372,48 @@ class LibraryController:
 			reservas_creadas.append(mostrar)
 
 		return reservas_creadas
+	
+    
+	### RECOMENDACIONES SISTEMA: 
+
+	def recomendacion_libros_sistema(self, user_id):
+    	# Obtener los libros reservados por el usuario
+		libros_reservados_usuario = db.select("SELECT idLibro FROM Reserva WHERE idUsuario = ?", (user_id,))
+
+    	# Obtener los amigos del usuario
+		amigos = db.select("SELECT idAmigo FROM Amigo WHERE idUsuario = ?", (user_id,))
+		amigos_tupla = tuple(amigo[0] for amigo in amigos)
+
+
+    	# Obtener los libros reservados por los amigos
+		placeholders = ', '.join(['?' for _ in amigos])
+		libros_reservados_amigos = db.select(f"SELECT idLibro FROM Reserva WHERE idUsuario IN ({placeholders})", amigos_tupla)
+    	# Combinar las reservas del usuario y las de sus amigos
+		libros_reservados_totales = set(libros_reservados_usuario) | set(libros_reservados_amigos)
+
+		if not libros_reservados_totales:
+			return []
+
+    	# Obtener el autor de los libros reservados por el usuario y sus amigos
+		#autores_libros_reservados = db.select("SELECT a.name FROM Book b, Author a WHERE b.author = a.id AND b.id IN (?)", (libros_reservados_totales,))
+		placeholders = ', '.join(['?' for _ in libros_reservados_totales])
+		consulta_sql = f"SELECT a.name FROM Book b, Author a WHERE b.author = a.id AND b.id IN ({placeholders})"
+		autores_libros_reservados = db.select(consulta_sql, libros_reservados_totales)
+
+		if not autores_libros_reservados:
+			return []
+
+    	# Obtener libros con el mismo autor que no ha reservado el usuario
+		libros_no_leidos_con_mismo_autor = []
+		for autor in autores_libros_reservados:
+			libros_similares = db.select("SELECT b.* FROM Book b, Author a WHERE b.author = a.id AND a.name = ? AND b.id NOT IN (SELECT idLibro FROM Reserva WHERE idUsuario = ?)", (autor[0], user_id,))
+			libros_no_leidos_con_mismo_autor.extend(libros_similares)
+
+    	# Obtener libros reservados por los amigos que no ha reservado el usuario
+		libros_reservados_amigos_no_leidos = db.select("SELECT b.* FROM Book b WHERE b.id IN (?) AND b.id NOT IN (SELECT idLibro FROM Reserva WHERE idUsuario = ?)", (libros_reservados_amigos, user_id))
+
+    	# Combinar ambas recomendaciones
+		libros_no_leidos = libros_no_leidos_con_mismo_autor + libros_reservados_amigos_no_leidos
+
+		libros_objetos = [Book(libro[0], libro[1], libro[2], libro[3], libro[4], libro[5]) for libro in libros_no_leidos]
+		return libros_objetos

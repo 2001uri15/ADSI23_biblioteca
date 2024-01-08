@@ -300,6 +300,8 @@ def perfil():
 	solicitudYo=False
 	solicitudUsuario=False
 	solicitudEl=False
+	librosre_comendados = None
+	
 	if _id != -1:
 		#PERFIL AJENO
 		User = library.get_user_id(_id)
@@ -310,6 +312,7 @@ def perfil():
 		amigos = library.misAmigos(User,UserLogin)
 		solicitudYo=library.solicitudMandadaYo(UserLogin.id,User.id)
 		solicitudEl=library.solicitudMandadaEl(UserLogin.id,User.id)
+	
 	else:
 		if 'user' not in dir(request) or request.user is None:
 			User = None
@@ -324,8 +327,9 @@ def perfil():
 			listaLibros = library.recomendaciones_amigos_libros(User)
 			listas = set(listaAmigos + listaLibros)
 			listaPeticiones = library.obtenerListaPeticiones(User)
+			libros_recomendados = library.recomendacion_libros_sistema(User.id)
 	if User != None:
-		return render_template('perfil.html', User=User, id=_id, soyYo=soyYo, UserLogin=UserLogin, amigosRecom=listas, solicitudYo=solicitudYo, solicitudEl=solicitudEl, amigos=amigos, esAmigo=esAmigo, peticiones=listaPeticiones) #Paso a la vista las dos litas
+		return render_template('perfil.html', User=User, id=_id, soyYo=soyYo, UserLogin=UserLogin, amigosRecom=listas, solicitudYo=solicitudYo, solicitudEl=solicitudEl, amigos=amigos, esAmigo=esAmigo, peticiones=listaPeticiones, libros_recomendados=libros_recomendados) #Paso a la vista las dos litas
 	else:
 		return redirect("/login")
 	
