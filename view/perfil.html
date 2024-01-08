@@ -109,7 +109,7 @@
                 <a href="/historial_reservas?user_id={{User.id}}&location=/perfil" class="btn btn-primary" style="color: white; text-decoration: none;">Historial de reservas</a>
             </div>
             
-            <p>Contenido de la columna izquierda.</p>
+            <!--<p>Contenido de la columna izquierda.</p>-->
         </div>
 
         <!--CONTENIDO QUE SE QUIERA PONER DEL USUARIO-->
@@ -240,6 +240,7 @@
             </nav>
             <div>
                 <!--TABLA DE LIBROS RECOMENDADOS POR EL SISTEMA-->
+                <!--
                 <table class="table tabla-recomendaciones-sistema">
                     <thead>
                         <tr>
@@ -262,6 +263,20 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                -->
+
+                <h5>Libros recomendados:</h5>
+                {% if libros_recomendados == None: %}
+                    <h6>No hay recomendaciones</h6>
+                {% else: %}
+                    {% for elem in libros_recomendados%}
+                    <div class="card-body">
+                        <a href="{{ url_for('ver_libro', book_id=elem.id) }}"><h5 class="card-title">{{elem.title}}</h5></a>
+                        
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
             </div>
             {% else %}
                 <!-- Mensaje si no hay recomendaciones del sistema -->
@@ -269,7 +284,7 @@
             {% endif %}
 
         
-            <p>Contenido de la columna derecha.</p>
+            <!--<p>Contenido de la columna derecha.</p>-->
         </div>
         
     </div>

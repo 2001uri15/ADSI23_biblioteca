@@ -395,7 +395,7 @@ class LibraryController:
 	### RECOMENDACIONES SISTEMA: 
 
 	def recomendacion_libros_sistema(self, user_id):
-    # Obtener los libros reservados por el usuario y sus autores:
+    	# Obtener los libros reservados por el usuario y sus autores:
 		libros_reservados = db.select(
         "SELECT b.id, b.title, b.author, MAX(rs.puntuacion) as max_puntuacion "
         "FROM Reserva r "
@@ -404,17 +404,20 @@ class LibraryController:
         "WHERE r.idUsuario = ? "
         "GROUP BY b.id, b.title, b.author", (user_id,)
     	)
+		print("Los libros que tengo reservados son: ", libros_reservados)
 
 		if not libros_reservados:
 			return []
+		
+    	# Ordenar los libros reservados ordenados por la puntuación más alta (para que muestre eesos primero)
+		#libros_reservados.sort(key=lambda libro: libro[3] if libro[3] is not None else float('-inf'), reverse=True)
 
-    # Ordenar los libros reservados ordenados por la puntuación más alta (para que muestre eesos primero)
-		libros_reservados.sort(key=lambda libro: libro[3] if libro[3] is not None else float('-inf'), reverse=True)
-
-    # Obtener los autores de los libros reservados por el usuario:
+    	# Obtener los autores de los libros reservados por el usuario:
 		autores_libros_reservados = [libro[2] for libro in libros_reservados]
+		autores_libros_reservados = list(set(autores_libros_reservados))
+		print("Y los autores de estos libros son: ", autores_libros_reservados)
 
-    # Obtener libros del mismo autor que el usuario no ha reservado:
+    	# Obtener libros del mismo autor que el usuario no ha reservado:
 		libros_no_reservados_mismo_autor = []
 		for autor in autores_libros_reservados:
 			libros_similares = db.select(
@@ -427,9 +430,16 @@ class LibraryController:
         	)
 			libros_no_reservados_mismo_autor.extend(libros_similares)
 
-    # Ordenar los libros por la puntuación más alta:
+		print("Estos son algunos libros de los mismos autores", libros_no_reservados_mismo_autor)
+
+    	# Ordenar los libros por la puntuación más alta:
 		libros_no_reservados_mismo_autor.sort(key=lambda libro: libro[6] if libro[6] is not None else float('-inf'), reverse=True)
 
 
 		libros_objetos = [Book(libro[0], libro[1], libro[2], libro[3], libro[4], libro[5]) for libro in libros_no_reservados_mismo_autor]
 		return libros_objetos
+
+
+
+	def recomendacion_libros_sistemaALT(self, user_id):
+		libros_leidos
